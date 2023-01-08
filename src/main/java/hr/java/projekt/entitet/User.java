@@ -1,15 +1,19 @@
 package hr.java.projekt.entitet;
 
-public class User extends Entitet{
-    private String username;
-    private String email;
-    private Long password;
+import hr.java.projekt.util.Hash;
 
-    public User(Long id, String username, String email, String password) {
+public class User extends Entitet{
+    private String email;
+    private String username;
+    private Long password;
+    private Integer role;
+
+    public User(Long id, String email, String username, Long password, Integer role) {
         super(id);
-        this.username = username;
         this.email = email;
-        //this.password = password;
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -33,6 +37,6 @@ public class User extends Entitet{
     }
 
     public void setPassword(String password) {
-        //this.password = password;
+        this.password = Hash.hash(password);
     }
 }
