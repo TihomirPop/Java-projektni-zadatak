@@ -59,4 +59,9 @@ public class LoginController {
     public void goToRegister(){
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("register.fxml")));
     }
+
+    @FXML
+    public void goToMainList(){
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("mainList.fxml")));
+    }
 }

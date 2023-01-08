@@ -8,7 +8,7 @@ import java.util.List;
 public class Movie extends Show{
     private LocalDate releaseDate;
 
-    public Movie(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, Image slika, String studio, List<String> genres, List<Show> sequence, List<Long> idSeqience, LocalDate releaseDate) {
+    public Movie(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Show> sequence, List<Long> idSeqience, LocalDate releaseDate) {
         super(id, orginalniNaslov, prevedeniNaslov, opis, slika, studio, genres, sequence, idSeqience);
         this.releaseDate = releaseDate;
     }

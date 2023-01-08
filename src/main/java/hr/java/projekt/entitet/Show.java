@@ -1,6 +1,8 @@
 package hr.java.projekt.entitet;
 
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,16 +11,16 @@ public abstract class Show extends Entitet implements Serializable {
     private String orginalniNaslov;
     private String prevedeniNaslov;
     private String opis;
-    private Image slika;
+    private String slika;
     private String studio;
-    private List<String> genres;
+    private List<Genre> genres;
     private List<Show> sequence;
     private List<Long> idSeqience;
     //private List<List<Show>> alternatives;
     //List<Review> reviews;
 
 
-    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, Image slika, String studio, List<String> genres, List<Show> sequence, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
+    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Show> sequence, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
         super(id);
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
@@ -54,11 +56,11 @@ public abstract class Show extends Entitet implements Serializable {
         this.opis = opis;
     }
 
-    public Image getSlika() {
+    public String getSlika() {
         return slika;
     }
 
-    public void setSlika(Image slika) {
+    public void setSlika(String slika) {
         this.slika = slika;
     }
 
@@ -70,11 +72,11 @@ public abstract class Show extends Entitet implements Serializable {
         this.studio = studio;
     }
 
-    public List<String> getGenres() {
+    public List<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<String> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
 
