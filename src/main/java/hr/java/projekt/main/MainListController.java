@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +18,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class MainListController {
-
     @FXML
     private TableView<Show> showTableView;
     @FXML

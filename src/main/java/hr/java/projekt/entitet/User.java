@@ -39,4 +39,12 @@ public class User extends Entitet{
     public void setPassword(String password) {
         this.password = Hash.hash(password);
     }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
+    }
 }

@@ -6,18 +6,20 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="hr.java.projekt.main.MainListController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1085.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.java.projekt.main.MainListController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1500.0" minWidth="10.0" percentWidth="60.0" prefWidth="1000.0" />
+    <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="607.2" minHeight="10.0" prefHeight="250.20001640319822" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="767.7999938964844" minHeight="10.0" percentHeight="70.0" prefHeight="682.9999755859375" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TableView fx:id="showTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
+       <fx:include source="izbornik.fxml" GridPane.columnIndex="1" />
+      <TableView fx:id="showTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
         <columns>
           <TableColumn fx:id="idTableColumn" prefWidth="81.60000306367874" text="ID" />
           <TableColumn fx:id="imgTableColumn" minWidth="4.79998779296875" prefWidth="68.79998779296875" text="Img" />

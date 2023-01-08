@@ -1,9 +1,6 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.entitet.Genre;
-import hr.java.projekt.entitet.Series;
-import hr.java.projekt.entitet.Show;
-import hr.java.projekt.entitet.StartEndDate;
+import hr.java.projekt.entitet.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -23,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class Main extends Application {
     static Stage mainStage;
+    static User currentUser = null;
     static Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     @Override
@@ -67,7 +65,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("dat/shows/steinsGate"))){
+        /*try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("dat/shows/steinsGate"))){
             List<Genre> genres = new ArrayList<>();
             genres.add(Genre.DRAMA);
             genres.add(Genre.SCI_FI);
@@ -96,7 +94,7 @@ public class Main extends Application {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         launch();}
 }

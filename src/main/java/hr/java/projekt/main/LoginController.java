@@ -41,7 +41,8 @@ public class LoginController {
         if(greske.isEmpty()){
             try {
                 User user = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
-
+                Main.currentUser = user;
+                goToMainList();
             }catch (ArrayIndexOutOfBoundsException e){
                 logger.warn(e.getMessage(), e);
                 System.out.println(e.getMessage());
