@@ -3,6 +3,8 @@ package hr.java.projekt.entitet;
 public abstract class Entitet {
     private Long id;
 
+    public Entitet() {}
+
     public Entitet(Long id) {
         this.id = id;
     }

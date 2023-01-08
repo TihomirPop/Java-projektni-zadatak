@@ -1,5 +1,8 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.Series;
+import hr.java.projekt.entitet.Show;
+import hr.java.projekt.entitet.StartEndDate;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -8,7 +11,9 @@ import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -58,7 +63,5 @@ public class Main extends Application {
 
         alert.showAndWait();
     }
-    public static void main(String[] args) {
-        launch();
-    }
+    public static void main(String[] args) {launch();}
 }
