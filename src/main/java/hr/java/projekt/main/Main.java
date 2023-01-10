@@ -88,7 +88,8 @@ public class Main extends Application {
                     genres,
                     null,
                     idSequence,
-                    new StartEndDate(LocalDate.parse("2011-04-06"), LocalDate.parse("2011-09-14")));
+                    new StartEndDate(LocalDate.parse("2011-04-06"), LocalDate.parse("2011-09-14")),
+                    24);
             out.writeObject(show);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

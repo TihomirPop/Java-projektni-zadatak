@@ -104,4 +104,9 @@ public abstract class Show extends Entitet implements Serializable {
     public void setAlternatives(List<List<Show>> alternatives) {
         this.alternatives = alternatives;
     }*/
+
+    @Override
+    public String toString() {
+        return getId().toString() + " - " + orginalniNaslov;
+    }
 }

@@ -11,10 +11,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class MainListController {
@@ -23,9 +22,12 @@ public class MainListController {
     @FXML
     private TableColumn<Show, String> idTableColumn;
     @FXML
-    private TableColumn<Show, ImageView> imgTableColumn;
-    @FXML
     private TableColumn<Show, String> naslovaTableColumn;
+    @FXML
+    private Label selectedNaslov;
+
+    @FXML
+    private ImageView imageView;
 
     public void initialize() {
         Show show;
@@ -47,12 +49,22 @@ public class MainListController {
             throw new RuntimeException(e);
         }
 
-        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Show> observable, Show oldValue, Show newValue) -> {
-            try{
+//        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Show> observable, Show oldValue, Show newValue) -> {
+//            try{
+//
+//            }catch (NullPointerException e){
+//                System.out.println(e.getMessage());
+//            }
+//        });
+    }
 
-            }catch (NullPointerException e){
-                System.out.println(e.getMessage());
-            }
-        });
+    @FXML
+    void rowSelect(){
+        if(!showTableView.getSelectionModel().isEmpty()){
+            Show selectedShow = showTableView.getSelectionModel().getSelectedItem();
+            File file = new File(showTableView.getSelectionModel().getSelectedItem().getSlika());
+            imageView.setImage(new Image(file.getAbsolutePath()));
+            selectedNaslov.setText(selectedShow.getOrginalniNaslov());
+        }
     }
 }

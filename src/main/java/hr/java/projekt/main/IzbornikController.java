@@ -61,4 +61,9 @@ public class IzbornikController {
         Main.currentUser = null;
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
     }
+
+    @FXML
+    public void editShows(){
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("editShows.fxml")));
+    }
 }

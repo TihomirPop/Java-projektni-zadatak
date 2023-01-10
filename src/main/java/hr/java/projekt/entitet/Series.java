@@ -7,10 +7,12 @@ import java.util.List;
 
 public class Series extends Show{
     private StartEndDate startEndDate;
+    private Integer numberOfEpisodes;
 
-    public Series(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Show> sequence, List<Long> idSeqience, StartEndDate startEndDate) {
+    public Series(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Show> sequence, List<Long> idSeqience, StartEndDate startEndDate, Integer numberOfEpisodes) {
         super(id, orginalniNaslov, prevedeniNaslov, opis, slika, studio, genres, sequence, idSeqience);
         this.startEndDate = startEndDate;
+        this.numberOfEpisodes = numberOfEpisodes;
     }
 
     public StartEndDate getStartEndDate() {
@@ -19,5 +21,13 @@ public class Series extends Show{
 
     public void setStartEndDate(StartEndDate startEndDate) {
         this.startEndDate = startEndDate;
+    }
+
+    public Integer getNumberOfEpisodes() {
+        return numberOfEpisodes;
+    }
+
+    public void setNumberOfEpisodes(Integer numberOfEpisodes) {
+        this.numberOfEpisodes = numberOfEpisodes;
     }
 }
