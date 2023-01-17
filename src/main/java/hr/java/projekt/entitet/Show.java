@@ -20,7 +20,7 @@ public abstract class Show extends Entitet implements Serializable {
     //List<Review> reviews;
 
 
-    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Show> sequence, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
+    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
         super(id);
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
@@ -28,7 +28,6 @@ public abstract class Show extends Entitet implements Serializable {
         this.slika = slika;
         this.studio = studio;
         this.genres = genres;
-        this.sequence = sequence;
         this.idSeqience = idSeqience;
     }
 

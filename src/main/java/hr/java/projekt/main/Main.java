@@ -1,5 +1,6 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.db.DataBase;
 import hr.java.projekt.entitet.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -86,7 +87,6 @@ public class Main extends Application {
                     "dat/img/steinsGate.jpg",
                     "White Fox",
                     genres,
-                    null,
                     idSequence,
                     new StartEndDate(LocalDate.parse("2011-04-06"), LocalDate.parse("2011-09-14")),
                     24);
