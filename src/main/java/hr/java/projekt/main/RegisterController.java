@@ -86,7 +86,7 @@ public class RegisterController {
             out.write('\n' + email);
             out.write('\n' + username);
             out.write('\n' + Hash.hash(password).toString());
-            out.write("\n0");
+            out.write("\n1");
             Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
