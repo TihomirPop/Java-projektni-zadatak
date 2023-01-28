@@ -1,5 +1,6 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.EmailVerification;
 import javafx.application.Platform;
@@ -44,10 +45,10 @@ public class MojProfilController {
     @FXML
     private void verify(){
         String kod = generirajKod();
-        EmailVerification.sendMail(Main.currentUser.getEmail(), kod);
         TextInputDialog td = new TextInputDialog("******");
         td.setTitle("Verifikacija");
         td.setHeaderText("Verifikacijski kod je poslan na vašu email adresu");
+        new Thread(new SendVerificationEmailThread(Main.currentUser.getEmail(), kod)).start();
         Optional<String> uneseniKod = td.showAndWait();
         if(!uneseniKod.isPresent())
             return;
