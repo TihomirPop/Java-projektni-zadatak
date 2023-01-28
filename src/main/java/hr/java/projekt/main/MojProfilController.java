@@ -1,5 +1,6 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.User;
 import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.EmailVerification;
@@ -7,10 +8,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MojProfilController {
+    Logger logger = LoggerFactory.getLogger(Main.class);
     @FXML
     private VBox passwordVbox;
     @FXML
@@ -18,9 +23,9 @@ public class MojProfilController {
     @FXML
     private TextField emailTextField;
     @FXML
-    private PasswordField newPassword;
+    private PasswordField newPasswordTextField;
     @FXML
-    private PasswordField confirmPassword;
+    private PasswordField confirmPasswordTextField;
     @FXML
     private Button verificirajButton;
     @FXML
@@ -40,6 +45,51 @@ public class MojProfilController {
             verifikacijaLabel.setText("OPREZ!\nEmail nije verificiran!");
             verificirajButton.setDisable(false);
         }
+    }
+
+    @FXML
+    private void save(){
+        String username = usernameTextField.getText();
+        String email = emailTextField.getText();
+        String password = newPasswordTextField.getText();
+        String confirmPassword = confirmPasswordTextField.getText();
+
+        List<User> sameUser = Datoteke.getUsers();
+        if(!username.isEmpty())
+            sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username)).toList();
+        if(!email.isEmpty())
+            sameUser = sameUser.stream().filter(user -> user.getEmail().equals(email)).toList();
+
+        if(!sameUser.isEmpty() && (!username.equals(Main.currentUser.getUsername()) || !email.equals(Main.currentUser.getEmail()))) {
+            logger.warn("To korisnicko ime ili email se vec koristi");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Pogrešan unos podataka");
+            alert.setHeaderText("Korisnicko ime ili email se vec koristi");
+            alert.showAndWait();
+            return;
+        }
+        if(password.length() < 6 && !password.isEmpty()) {
+            logger.warn("Duzina lozinke mora biti barem 6");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Pogrešan unos podataka");
+            alert.setHeaderText("Duzina lozinke mora biti barem 6");
+            alert.showAndWait();
+            return;
+        }
+        if (!password.equals(confirmPassword) && !password.isEmpty()) {
+            logger.warn("Lozinke se moraju podudarati");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Pogrešan unos podataka");
+            alert.setHeaderText("Lozinke se moraju podudarati");
+            alert.showAndWait();
+            return;
+        }
+
+        if(!password.isEmpty())
+            Main.currentUser.setPassword(password);
+        Main.currentUser.setEmail(email);
+        Main.currentUser.setUsername(username);
+        Datoteke.editUser(Main.currentUser);
     }
 
     @FXML

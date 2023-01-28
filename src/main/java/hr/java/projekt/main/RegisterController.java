@@ -53,26 +53,23 @@ public class RegisterController {
         }
         List<User> sameUser = users.stream().filter(u -> (u.getUsername().equals(username)) || (u.getEmail().equals(email))).toList();
         if(!sameUser.isEmpty()) {
-            logger.warn("To korisnicko ime ili lozinka se vec koristi");
-            System.out.println("To korisnicko ime ili lozinka se vec koristi");
+            logger.warn("To korisnicko ime ili email se vec koristi");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Pogrešan unos podataka");
-            alert.setHeaderText("Korisnicko ime ili lozinka se vec koristi");
+            alert.setHeaderText("Korisnicko ime ili email se vec koristi");
             alert.showAndWait();
             return;
         }
-        if(password.length() < 8) {
-            logger.warn("Duzina lozinke mora biti barem 8");
-            System.out.println("Duzina lozinke mora biti barem 8");
+        if(password.length() < 6) {
+            logger.warn("Duzina lozinke mora biti barem 6");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Pogrešan unos podataka");
-            alert.setHeaderText("Duzina lozinke mora biti barem 8");
+            alert.setHeaderText("Duzina lozinke mora biti barem 6");
             alert.showAndWait();
             return;
         }
         if (!password.equals(passwordConfirm)) {
-            logger.warn("Passwords se moraju podudarati");
-            System.out.println("Passwords se moraju podudarati");
+            logger.warn("Lozinke se moraju podudarati");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Pogrešan unos podataka");
             alert.setHeaderText("Lozinke se moraju podudarati");
