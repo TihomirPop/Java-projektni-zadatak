@@ -13,7 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 public class EmailVerification {
     private static final String EMAIL_VERIFICATION_FILE = "emailVerification.properties";
-    public static void sendMail(String email, String kod){
+    public static synchronized void sendMail(String email, String kod){
         try {
             Properties properties = System.getProperties();
             Properties emailProperties = new Properties();
