@@ -7,7 +7,7 @@
    <children>
       <Button fx:id="showsButton" minHeight="40.0" mnemonicParsing="false" onAction="#shows" text="Shows" />
       <Button fx:id="mojaListaButton" minHeight="40.0" mnemonicParsing="false" text="Moja lista" />
-      <Button fx:id="mojProfilButton" minHeight="40.0" mnemonicParsing="false" text="Moj profil" />
+      <Button fx:id="mojProfilButton" minHeight="40.0" mnemonicParsing="false" onAction="#mojProfil" text="Moj profil" />
       <Button fx:id="editShowsButton" minHeight="40.0" mnemonicParsing="false" onAction="#editShows" text="Edit shows" />
       <Button fx:id="editUsersButton" minHeight="40.0" mnemonicParsing="false" text="Edit users" />
       <Button fx:id="backToLoginButton" minHeight="40.0" mnemonicParsing="false" onAction="#backToLogin" text="Back to login" />

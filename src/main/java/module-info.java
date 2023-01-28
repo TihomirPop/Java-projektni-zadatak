@@ -3,6 +3,7 @@ module hr.java.projekt.main {
     requires javafx.fxml;
     requires org.slf4j;
     requires java.sql;
+    requires java.mail;
 
 
     opens hr.java.projekt.main to javafx.fxml;
