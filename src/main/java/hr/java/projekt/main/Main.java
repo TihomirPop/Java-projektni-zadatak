@@ -1,23 +1,19 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.db.DataBase;
-import hr.java.projekt.entitet.*;
+import hr.java.projekt.entitet.User;
+import hr.java.projekt.util.EmailVerification;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import java.io.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 public class Main extends Application {
     static Stage mainStage;

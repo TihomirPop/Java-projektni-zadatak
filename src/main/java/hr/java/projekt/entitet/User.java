@@ -7,13 +7,15 @@ public class User extends Entitet{
     private String username;
     private Long password;
     private Integer role;
+    private Boolean verified;
 
-    public User(Long id, String email, String username, Long password, Integer role) {
+    public User(Long id, String email, String username, Long password, Integer role, Boolean verified) {
         super(id);
         this.email = email;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.verified = verified;
     }
 
     public String getUsername() {
@@ -46,5 +48,13 @@ public class User extends Entitet{
 
     public void setRole(Integer role) {
         this.role = role;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

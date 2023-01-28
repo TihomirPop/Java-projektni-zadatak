@@ -79,19 +79,7 @@ public class RegisterController {
             alert.showAndWait();
             return;
         }
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(Datoteke.USERS_PATH, true))) {
-            OptionalLong optionalId = users.stream().mapToLong(p -> p.getId()).max();
-            Long id = optionalId.getAsLong() + 1;
-            out.write('\n' + id.toString());
-            out.write('\n' + email);
-            out.write('\n' + username);
-            out.write('\n' + Hash.hash(password).toString());
-            out.write("\n1");
-            Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
-        } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
-            System.out.println(e.getMessage());
-        }
+        Datoteke.addUser(new User(null, email, username, Hash.hash(password), 1, false));
     }
 
     @FXML

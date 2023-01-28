@@ -2,21 +2,23 @@ package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.main.Main;
+import javafx.fxml.FXMLLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
 public class Datoteke {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static final String USERS_PATH = "dat/users.txt";
-    public static final int SIZE_OF_USERS = 5;
+    public static final int SIZE_OF_USERS = 6;
 
     public static List<User> getUsers(){
         try(BufferedReader reader = new BufferedReader(new FileReader(USERS_PATH))) {
@@ -30,7 +32,8 @@ public class Datoteke {
                         usersLines.get(i + 1),
                         usersLines.get(i + 2),
                         Long.parseLong(usersLines.get(i + 3)),
-                        Integer.parseInt(usersLines.get(i + 4))
+                        Integer.parseInt(usersLines.get(i + 4)),
+                        Boolean.parseBoolean(usersLines.get(i + 5))
                 ));
             }
             return users;
@@ -38,5 +41,50 @@ public class Datoteke {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static void addUser(User user){
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(USERS_PATH, true))) {
+            OptionalLong optionalId = getUsers().stream().mapToLong(p -> p.getId()).max();
+            Long id = optionalId.getAsLong() + 1;
+            out.write('\n' + id.toString());
+            out.write('\n' + user.getEmail());
+            out.write('\n' + user.getUsername());
+            out.write('\n' + user.getPassword().toString());
+            out.write('\n' + user.getRole().toString());
+            out.write('\n' + user.getVerified().toString());
+            Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
+        } catch (IOException e) {
+            logger.warn(e.getMessage(), e);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void editUser(User user){
+        try {
+            List<String> userLines = Files.lines(Path.of(USERS_PATH)).collect(Collectors.toList());
+            for(int i = 0; i < userLines.size(); i += SIZE_OF_USERS)
+                if(userLines.get(i).equals(user.getId().toString())){
+                    if(user.getEmail() != null)
+                        userLines.set(i + 1, user.getEmail());
+                    if(user.getUsername() != null)
+                        userLines.set(i + 2, user.getUsername());
+                    if(user.getPassword() != null)
+                        userLines.set(i + 3, user.getPassword().toString());
+                    if(user.getRole() != null)
+                        userLines.set(i + 4, user.getRole().toString());
+                    if(user.getVerified() != null)
+                        userLines.set(i + 5, user.getVerified().toString());
+                    break;
+                }
+            String userText = userLines.get(0);
+            for(int i = 1; i < userLines.size(); i++)
+                userText += '\n' + userLines.get(i);
+            
+            Files.write(Path.of(USERS_PATH), userText.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
