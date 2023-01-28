@@ -45,14 +45,14 @@ public class MojProfilController {
     @FXML
     private void verify(){
         String kod = generirajKod();
+        new Thread(new SendVerificationEmailThread(Main.currentUser.getEmail(), kod)).start();
         TextInputDialog td = new TextInputDialog("******");
         td.setTitle("Verifikacija");
         td.setHeaderText("Verifikacijski kod je poslan na vašu email adresu");
-        new Thread(new SendVerificationEmailThread(Main.currentUser.getEmail(), kod)).start();
         Optional<String> uneseniKod = td.showAndWait();
         if(!uneseniKod.isPresent())
             return;
-        while(!uneseniKod.isPresent() || !uneseniKod.get().equals(kod)){
+        while(!uneseniKod.isPresent() || !uneseniKod.get().toUpperCase().equals(kod)){
             if(!uneseniKod.isPresent())
                 return;
             Alert alert = new Alert(Alert.AlertType.ERROR);
