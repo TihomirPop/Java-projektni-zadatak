@@ -57,13 +57,17 @@ public class IzbornikController {
     }
 
     @FXML
-    public void backToLogin(){
+    private void shows(){
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("mainList.fxml")));
+    }
+    @FXML
+    private void backToLogin(){
         Main.currentUser = null;
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
     }
 
     @FXML
-    public void editShows(){
+    private void editShows(){
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("editShows.fxml")));
     }
 }
