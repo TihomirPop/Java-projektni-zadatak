@@ -1,13 +1,14 @@
 package hr.java.projekt.db;
 
-import hr.java.projekt.entitet.Genre;
-import hr.java.projekt.entitet.Movie;
-import hr.java.projekt.entitet.Series;
-import hr.java.projekt.entitet.Show;
+import hr.java.projekt.entitet.*;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 
 public class DataBase {
@@ -19,6 +20,80 @@ public class DataBase {
         String username = properties.getProperty("username");
         String password = properties.getProperty("password");
         return DriverManager.getConnection(dataBaseUrl, username, password);
+    }
+
+    public static List<Show> getShows(){
+        try(Connection connection = spajanjeNaBazu()) {
+            List<Show> shows = new ArrayList<>();
+            List<Long> ids = new ArrayList<>();
+            List<String> orginalniNaslovi = new ArrayList<>();
+            List<String> prevedeniNaslovi = new ArrayList<>();
+            List<String> opisi = new ArrayList<>();
+            List<String> slike = new ArrayList<>();
+            List<String> studiji = new ArrayList<>();
+
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM SHOWS");
+            while (rs.next()){
+                ids.add(rs.getLong("ID"));
+                orginalniNaslovi.add(rs.getString("ORGINALNI_NASLOV"));
+                prevedeniNaslovi.add(rs.getString("PREVEDENI_NASLOV"));
+                opisi.add(rs.getString("OPIS"));
+                slike.add(rs.getString("SLIKA"));
+                studiji.add(rs.getString("STUDIO"));
+            }
+
+            for(int i = 0; i < ids.size(); i++) {
+                PreparedStatement seriesPS = connection.prepareStatement("SELECT * FROM SERIES WHERE ID = ?");
+                seriesPS.setLong(1, ids.get(i));
+                rs = seriesPS.executeQuery();
+                if (rs.next()) {
+                    shows.add(new Series(
+                            ids.get(i),
+                            orginalniNaslovi.get(i),
+                            prevedeniNaslovi.get(i),
+                            opisi.get(i),
+                            slike.get(i),
+                            studiji.get(i),
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            new StartEndDate(
+                                    rs.getDate("START_DATE").toLocalDate(),
+                                    rs.getDate("END_DATE").toLocalDate()),
+                            rs.getInt("NUMBER_OF_EPISODES")
+                    ));
+                    continue;
+                }
+                PreparedStatement moviePS = connection.prepareStatement("SELECT * FROM MOVIES WHERE ID = ?");
+                moviePS.setLong(1, ids.get(i));
+                rs = moviePS.executeQuery();
+                if (rs.next()) {
+                    shows.add(new Movie(
+                            ids.get(i),
+                            orginalniNaslovi.get(i),
+                            prevedeniNaslovi.get(i),
+                            opisi.get(i),
+                            slike.get(i),
+                            studiji.get(i),
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            rs.getDate("RELEASE_DATE").toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    ));
+                }
+            }
+
+            for(Show show: shows){
+                PreparedStatement genresPS = connection.prepareStatement("SELECT * FROM SHOWS_GENRES WHERE ID = ?");
+                genresPS.setLong(1, show.getId());
+                rs = genresPS.executeQuery();
+                while (rs.next())
+                    show.getGenres().add(Genre.valueOf(rs.getString("GENRE")));
+            }
+            //kod za sequel
+            return shows;
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void addShow(Show show){
