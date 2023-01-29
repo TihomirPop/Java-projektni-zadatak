@@ -23,7 +23,7 @@ public class DataBase {
 
     public static void addShow(Show show){
         try(Connection connection = spajanjeNaBazu()) {
-            PreparedStatement showPS = connection.prepareStatement("INSERT INTO SHOW (ORGINALNI_NASLOV, PREVEDENI_NASLOV, OPIS, SLIKA, STUDIO) VALUES (?, ?, ?, ?, ?)");
+            PreparedStatement showPS = connection.prepareStatement("INSERT INTO SHOWS (ORGINALNI_NASLOV, PREVEDENI_NASLOV, OPIS, SLIKA, STUDIO) VALUES (?, ?, ?, ?, ?)");
             showPS.setString(1, show.getOrginalniNaslov());
             showPS.setString(2, show.getPrevedeniNaslov());
             showPS.setString(3, show.getOpis());
@@ -32,9 +32,12 @@ public class DataBase {
             showPS.executeUpdate();
 
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM SHOW ORDER BY ID DESC LIMIT 0, 1");
+            ResultSet rs = statement.executeQuery("SELECT * FROM SHOWS ORDER BY ID DESC LIMIT 0, 1");
             rs.next();
             show.setId(rs.getLong("ID"));
+            for(int i = 0; i < show.getIdSeqience().size(); i++)
+                if(show.getIdSeqience().get(i).equals(-1l))
+                    show.getIdSeqience().set(i, show.getId());
 
             connection.setAutoCommit(false);
             PreparedStatement showGeneresPS = connection.prepareStatement("INSERT INTO SHOWS_GENRES (ID, GENRE) VALUES (?, ?)");
