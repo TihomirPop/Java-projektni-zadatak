@@ -3,7 +3,6 @@ package hr.java.projekt.main;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
-import hr.java.projekt.util.EmailVerification;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -87,6 +86,11 @@ public class MojProfilController {
 
         if(!password.isEmpty())
             Main.currentUser.setPassword(password);
+        if(!email.equals(Main.currentUser.getEmail())) {
+            Main.currentUser.setVerified(false);
+            verifikacijaLabel.setText("OPREZ!\nEmail nije verificiran!");
+            verificirajButton.setDisable(false);
+        }
         Main.currentUser.setEmail(email);
         Main.currentUser.setUsername(username);
         Datoteke.editUser(Main.currentUser);
@@ -100,10 +104,10 @@ public class MojProfilController {
         td.setTitle("Verifikacija");
         td.setHeaderText("Verifikacijski kod je poslan na vašu email adresu");
         Optional<String> uneseniKod = td.showAndWait();
-        if(!uneseniKod.isPresent())
+        if(uneseniKod.isEmpty())
             return;
-        while(!uneseniKod.isPresent() || !uneseniKod.get().toUpperCase().equals(kod)){
-            if(!uneseniKod.isPresent())
+        while(uneseniKod.isEmpty() || !uneseniKod.get().toUpperCase().equals(kod)){
+            if(uneseniKod.isEmpty())
                 return;
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Krivi kod");
