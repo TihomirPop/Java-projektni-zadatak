@@ -7,5 +7,6 @@ module hr.java.projekt.main {
 
 
     opens hr.java.projekt.main to javafx.fxml;
+    opens hr.java.projekt.entitet to javafx.base;
     exports hr.java.projekt.main;
 }

@@ -61,5 +61,8 @@
 
 .choice-box{
     -fx-control-inner-background: rgb(40, 40, 40);
+}
 
+.table-column {
+    -fx-alignment: CENTER;
 }
