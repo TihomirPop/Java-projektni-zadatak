@@ -8,13 +8,14 @@ public class UserShow extends Entitet implements Serializable {
     private Score score;
     private String comment;
 
-    public UserShow(Long id, User user, Show show, Score score, String comment) {
+    UserShow(Long id, User user, Show show, Score score, String comment) {
         super(id);
         this.user = user;
         this.show = show;
         this.score = score;
         this.comment = comment;
     }
+
 
     public User getUser() {
         return user;

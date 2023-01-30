@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-public class Series extends Show{
+public final class Series extends Show implements Shows{
     private StartEndDate startEndDate;
     private Integer numberOfEpisodes;
 
@@ -30,5 +30,10 @@ public class Series extends Show{
 
     public void setNumberOfEpisodes(Integer numberOfEpisodes) {
         this.numberOfEpisodes = numberOfEpisodes;
+    }
+
+    @Override
+    public Show odrediNajboljiShow() {
+        return null;
     }
 }

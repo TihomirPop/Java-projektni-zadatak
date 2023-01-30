@@ -160,29 +160,41 @@ public class EditShowsController {
     private void sequelSearch(){
         String search = traziNastavkeTextField.getText();
 
-        if(search.equals(""))
-            showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> !showComboBox.getValue().getIdSeqience().contains(s.getId())).toList()));
-        else
-            showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> (!showComboBox.getValue().getIdSeqience().contains(s.getId())) && (s.getOrginalniNaslov().toLowerCase().contains(search.toLowerCase()) || s.getPrevedeniNaslov().toLowerCase().contains(search.toLowerCase()))).toList()));
+        showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> !nastavciListView.getItems().stream().mapToLong(Show::getId).boxed().toList().contains(s.getId())).toList()));
+        if(!search.isEmpty())
+            showNastavciComboBox.setItems(FXCollections.observableArrayList(showNastavciComboBox.getItems().stream().filter(s -> (s.getOrginalniNaslov().toLowerCase().contains(search.toLowerCase()) || s.getPrevedeniNaslov().toLowerCase().contains(search.toLowerCase()))).toList()));
     }
     @FXML
     private void addSequel(){
         if(!showNastavciComboBox.getSelectionModel().isEmpty()) {
-            ArrayList<Show> showsSequence = new ArrayList<>();
-            for(Long id: showNastavciComboBox.getValue().getIdSeqience())
-                showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
-            nastavciListView.getItems().addAll(showsSequence);
-            showNastavciComboBox.getItems().removeAll(showsSequence);
+            if(showNastavciComboBox.getValue().getIdSeqience().contains(showComboBox.getValue().getId())){
+                nastavciListView.getItems().add(showNastavciComboBox.getValue());
+                showNastavciComboBox.getItems().remove(showNastavciComboBox.getValue());
+            }
+            else {
+                ArrayList<Show> showsSequence = new ArrayList<>();
+                for (Long id : showNastavciComboBox.getValue().getIdSeqience())
+                    showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
+                nastavciListView.getItems().addAll(showsSequence);
+                showNastavciComboBox.getItems().removeAll(showsSequence);
+            }
+            sequelSearch();
         }
     }
     @FXML
     private void removeSequel(){
-        if(nastavciListView.getSelectionModel().getSelectedItem() != null && !nastavciListView.getSelectionModel().getSelectedItem().getId().equals(-1l)) {
-            ArrayList<Show> showsSequence = new ArrayList<>();
-            for(Long id: nastavciListView.getSelectionModel().getSelectedItem().getIdSeqience())
-                showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
-            nastavciListView.getItems().removeAll(showsSequence);
-            showNastavciComboBox.getItems().addAll(showsSequence);
+        if(nastavciListView.getSelectionModel().getSelectedItem() != null && !nastavciListView.getSelectionModel().getSelectedItem().getId().equals(showComboBox.getValue().getId())) {
+            if(nastavciListView.getSelectionModel().getSelectedItem().getIdSeqience().contains(showComboBox.getValue().getId())){
+                showNastavciComboBox.getItems().add(nastavciListView.getSelectionModel().getSelectedItem());
+                nastavciListView.getItems().remove(nastavciListView.getSelectionModel().getSelectedItem());
+            }
+            else {
+                ArrayList<Show> showsSequence = new ArrayList<>();
+                for (Long id : nastavciListView.getSelectionModel().getSelectedItem().getIdSeqience())
+                    showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
+                nastavciListView.getItems().removeAll(showsSequence);
+                showNastavciComboBox.getItems().addAll(showsSequence);
+            }
             sequelSearch();
         }
     }

@@ -4,6 +4,8 @@ import hr.java.projekt.entitet.*;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.sql.Date;
 import java.time.ZoneId;
@@ -211,6 +213,7 @@ public class DataBase {
 
     public static void deleteShow(Show show){
         try(Connection connection = spajanjeNaBazu()) {
+            Files.delete(Path.of(show.getSlika()));
             connection.createStatement().executeUpdate("DELETE FROM SHOWS_GENRES WHERE ID = " + show.getId().toString());
 
             if(show instanceof Series series)
