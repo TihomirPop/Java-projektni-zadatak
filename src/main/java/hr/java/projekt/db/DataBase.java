@@ -5,11 +5,10 @@ import hr.java.projekt.entitet.*;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.sql.Date;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataBase {
     private static final String DATABASE_FILE = "database.properties";
@@ -56,7 +55,7 @@ public class DataBase {
                             slike.get(i),
                             studiji.get(i),
                             new ArrayList<>(),
-                            new ArrayList<>(),
+                            null,
                             new StartEndDate(
                                     rs.getDate("START_DATE").toLocalDate(),
                                     rs.getDate("END_DATE").toLocalDate()),
@@ -77,7 +76,7 @@ public class DataBase {
                             studiji.get(i),
                             new ArrayList<>(),
                             new ArrayList<>(),
-                            rs.getDate("RELEASE_DATE").toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            rs.getDate("RELEASE_DATE").toLocalDate()
                     ));
                 }
             }
@@ -89,7 +88,29 @@ public class DataBase {
                 while (rs.next())
                     show.getGenres().add(Genre.valueOf(rs.getString("GENRE")));
             }
-            //kod za sequel
+
+            Map<Long, Long> sequelMap = new HashMap<>();
+            rs = connection.createStatement().executeQuery("SELECT * FROM SEQUELS");
+            while (rs.next())
+                sequelMap.put(rs.getLong("SHOW_ID"), rs.getLong("SEQUEL_ID"));
+
+            for(Show show: shows){
+                Long pocetak = show.getId();
+                ArrayList<Long> idSequence = new ArrayList<>();
+                while(sequelMap.containsValue(pocetak)) {
+                    Long finalPocetak = pocetak;
+                    pocetak = sequelMap.keySet().stream().filter(key -> sequelMap.get(key).equals(finalPocetak)).toList().get(0);
+                }
+                idSequence.add(pocetak);
+                while(sequelMap.containsKey(pocetak)){
+                    pocetak = sequelMap.get(pocetak);
+                    idSequence.add(pocetak);
+                }
+                show.setIdSeqience(idSequence);
+                if(show.getIdSeqience().isEmpty())
+                    show.getIdSeqience().add(show.getId());
+            }
+
             return shows;
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
@@ -136,6 +157,49 @@ public class DataBase {
                 PreparedStatement moviePS = connection.prepareStatement("INSERT INTO MOVIES (ID, RELEASE_DATE) VALUES (?, ?)");
                 moviePS.setLong(1, movie.getId());
                 moviePS.setDate(2, Date.valueOf(movie.getReleaseDate()));
+                moviePS.executeUpdate();
+            }
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        updateSequals(show);
+    }
+
+    public static void updateShow(Show show){
+        try(Connection connection = spajanjeNaBazu()) {
+            PreparedStatement showPS = connection.prepareStatement("UPDATE SHOWS SET ORGINALNI_NASLOV = ?, PREVEDENI_NASLOV = ?, OPIS = ?, SLIKA = ?, STUDIO = ? WHERE ID = ?");
+            showPS.setString(1, show.getOrginalniNaslov());
+            showPS.setString(2, show.getPrevedeniNaslov());
+            showPS.setString(3, show.getOpis());
+            showPS.setString(4, show.getSlika());
+            showPS.setString(5, show.getStudio());
+            showPS.setLong(6, show.getId());
+            showPS.executeUpdate();
+
+            connection.createStatement().executeUpdate("DELETE FROM SHOWS_GENRES WHERE ID = " + show.getId().toString());
+            connection.setAutoCommit(false);
+            PreparedStatement showGeneresPS = connection.prepareStatement("INSERT INTO SHOWS_GENRES (ID, GENRE) VALUES (?, ?)");
+            for(Genre genre: show.getGenres()){
+                showGeneresPS.setLong(1, show.getId());
+                showGeneresPS.setString(2, genre.toString());
+                showGeneresPS.executeUpdate();
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+
+            if(show instanceof Series series){
+                PreparedStatement seriesPS = connection.prepareStatement("UPDATE SERIES SET START_DATE = ?, END_DATE = ?, NUMBER_OF_EPISODES = ? WHERE ID = ?");
+                seriesPS.setDate(1, Date.valueOf(series.getStartEndDate().startDate()));
+                seriesPS.setDate(2, Date.valueOf(series.getStartEndDate().endDate()));
+                seriesPS.setInt(3, series.getNumberOfEpisodes());
+                seriesPS.setLong(4, series.getId());
+                seriesPS.executeUpdate();
+            }
+            else if(show instanceof Movie movie){
+                PreparedStatement moviePS = connection.prepareStatement("UPDATE MOVIES SET RELEASE_DATE = ? WHERE ID = ?");
+                moviePS.setDate(1, Date.valueOf(movie.getReleaseDate()));
+                moviePS.setLong(2, movie.getId());
                 moviePS.executeUpdate();
             }
         } catch (SQLException | IOException e) {

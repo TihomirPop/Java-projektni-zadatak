@@ -80,7 +80,7 @@ public class Main extends Application {
                             "However, when Rintarou decides to attend neuroscientist Kurisu Makise's conference on time travel, he experiences a series of strange events that lead him to believe that there is more to the \"Phone Microwave\" gadget than meets the eye. Apparently able to send text messages into the past using the microwave, Rintarou dabbles further with the \"time machine,\" attracting the ire and attention of the mysterious organization SERN.\n" +
                             "\n" +
                             "Due to the novel discovery, Rintarou and his friends find themselves in an ever-present danger. As he works to mitigate the damage his invention has caused to the timeline, he is not only fighting a battle to save his loved ones, but also one against his degrading sanity.",
-                    "dat/img/steinsGate.jpg",
+                    "dat/img/Steins;Gate.jpg",
                     "White Fox",
                     genres,
                     idSequence,

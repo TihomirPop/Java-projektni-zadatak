@@ -4,7 +4,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public abstract class Show extends Entitet implements Serializable {
@@ -25,7 +28,17 @@ public abstract class Show extends Entitet implements Serializable {
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
         this.opis = opis;
-        this.slika = slika;
+        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov + slika.substring(slika.length() - 4))) {
+            try {
+                this.slika = "dat/img/" + orginalniNaslov + slika.substring(slika.length() - 4);
+                Files.deleteIfExists(Path.of(this.slika));
+                Files.copy(Path.of(slika), Path.of(this.slika));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else
+            this.slika = slika;
         this.studio = studio;
         this.genres = genres;
         this.idSeqience = idSeqience;

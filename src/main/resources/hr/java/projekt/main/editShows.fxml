@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -45,7 +44,7 @@
                   <Insets right="5.0" />
                </padding>
             </Label>
-            <TextField maxWidth="250.0" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="traziTextField" maxWidth="250.0" onKeyTyped="#showSearch" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
@@ -55,13 +54,13 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <ComboBox fx:id="showComboBox" maxWidth="260.0" prefWidth="260.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <ComboBox fx:id="showComboBox" maxWidth="260.0" onAction="#edit" prefWidth="260.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
             </ComboBox>
-            <Button mnemonicParsing="false" text="Obriši" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" text="Spremi" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="obrisiButton" mnemonicParsing="false" text="Obriši" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Button fx:id="spremiButton" mnemonicParsing="false" onAction="#save" text="Spremi" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -92,6 +91,11 @@
             <RowConstraints minHeight="10.0" prefHeight="0.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
+            <Label text="Nastavci:" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
             <Label text="Prevedeni naziv:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets right="5.0" />
@@ -102,12 +106,12 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField GridPane.columnIndex="1">
+            <TextField fx:id="orginalniNazivTextField" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
             </TextField>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="prevedeniNazivTextField" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
@@ -123,7 +127,7 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="lokacijaSlike" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Label fx:id="lokacijaSlikeLabel" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <padding>
                   <Insets right="5.0" />
                </padding>
@@ -136,7 +140,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextArea prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowSpan="6">
+            <TextArea fx:id="opisTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowSpan="6">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </GridPane.margin>
@@ -151,23 +155,18 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <TextField fx:id="traziNastavkeTextField" onKeyTyped="#sequelSearch" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
             </TextField>
-            <ComboBox maxWidth="452.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+            <ComboBox fx:id="showNastavciComboBox" maxWidth="452.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
             </ComboBox>
-            <Button mnemonicParsing="false" text="Dodaj nastavak" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <Label text="Poredak nastavka:" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets right="5.0" />
-               </GridPane.margin>
-            </Label>
-            <ListView fx:id="sequalListView" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.rowSpan="3" GridPane.valignment="TOP">
+            <Button mnemonicParsing="false" onAction="#addSequel" text="Dodaj nastavak" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <ListView fx:id="nastavciListView" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.rowSpan="3" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
                </GridPane.margin>
@@ -177,7 +176,7 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <TextField fx:id="studioTextField" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
                </GridPane.margin>
@@ -187,7 +186,7 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <ListView fx:id="sequalListView1" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.rowSpan="3">
+            <ListView fx:id="zanroviListView" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.rowSpan="3">
                <GridPane.margin>
                   <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
                </GridPane.margin>
@@ -197,23 +196,18 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <ChoiceBox prefWidth="175.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets left="5.0" />
-               </GridPane.margin>
-            </ChoiceBox>
-            <DatePicker GridPane.columnIndex="3" GridPane.rowIndex="10">
+            <DatePicker fx:id="pocetakDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
             </DatePicker>
             <Button mnemonicParsing="false" text="Makni nastavak" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
-            <DatePicker GridPane.columnIndex="3" GridPane.rowIndex="11">
+            <DatePicker fx:id="krajDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
             </DatePicker>
-            <TextField maxWidth="175.0" prefWidth="175.0" GridPane.columnIndex="3" GridPane.rowIndex="12">
+            <TextField fx:id="brojEpizodaTextField" maxWidth="175.0" prefWidth="175.0" GridPane.columnIndex="3" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
@@ -223,16 +217,21 @@
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Kraj:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+            <Label fx:id="krajLabel" text="Kraj:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Broj epizoda:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="12">
+            <Label fx:id="brojEpizodaLabel" text="Broj epizoda:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets right="5.0" />
                </GridPane.margin>
             </Label>
+            <ComboBox fx:id="tipComboBox" maxWidth="175.0" onAction="#tipChange" prefWidth="175.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </ComboBox>
          </children>
       </GridPane>
    </children>
