@@ -209,6 +209,36 @@ public class DataBase {
         updateSequals(show);
     }
 
+    public static void deleteShow(Show show){
+        try(Connection connection = spajanjeNaBazu()) {
+            connection.createStatement().executeUpdate("DELETE FROM SHOWS_GENRES WHERE ID = " + show.getId().toString());
+
+            if(show instanceof Series series)
+                connection.createStatement().executeUpdate("DELETE FROM SERIES WHERE ID = " + series.getId().toString());
+            else if(show instanceof Movie movie)
+                connection.createStatement().executeUpdate("DELETE FROM MOVIES WHERE ID = " + movie.getId().toString());
+
+            List<Long> idSequence = new ArrayList<>();
+            for(Long id: show.getIdSeqience()){
+                if(id.equals(show.getId()))
+                    continue;
+                idSequence.add(id);
+            }
+            show.setIdSeqience(idSequence);
+            connection.createStatement().executeUpdate("DELETE FROM SEQUELS WHERE SHOW_ID = " + show.getId().toString());
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        updateSequals(show);
+
+        try(Connection connection = spajanjeNaBazu()) {
+            connection.createStatement().executeUpdate("DELETE FROM SHOWS WHERE ID = " + show.getId().toString());
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void updateSequals(Show show){
         try(Connection connection = spajanjeNaBazu()) {
             connection.setAutoCommit(false);

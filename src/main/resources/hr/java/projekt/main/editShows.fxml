@@ -59,7 +59,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </ComboBox>
-            <Button fx:id="obrisiButton" mnemonicParsing="false" text="Obriši" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Button fx:id="obrisiButton" mnemonicParsing="false" onAction="#delete" text="Obriši" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Button fx:id="spremiButton" mnemonicParsing="false" onAction="#save" text="Spremi" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets />
@@ -232,6 +232,16 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </ComboBox>
+            <Button maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#moveSequelUp" prefWidth="30.0" text="▲" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets right="5.0" top="20.0" />
+               </GridPane.margin>
+            </Button>
+            <Button maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#moveSequelDown" prefWidth="30.0" text="▼" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets bottom="20.0" right="5.0" />
+               </GridPane.margin>
+            </Button>
          </children>
       </GridPane>
    </children>

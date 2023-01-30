@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -58,17 +59,9 @@ public class EditShowsController {
     private List<Show> showsWithNewShow;
 
     public void initialize() {
-        shows = DataBase.getShows();
-        showsWithNewShow = new ArrayList<>();
-        showsWithNewShow.add(new Series(-1l, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
-        showsWithNewShow.get(0).getIdSeqience().add(-1l);
-        showsWithNewShow.addAll(shows);
-        showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow));
-        showComboBox.getSelectionModel().selectFirst();
+        refresh();
         fileChooser.setTitle("Odabir slike");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JPG/PNG", "*.jpg", "*.png"));
-        showNastavciComboBox.setItems(FXCollections.observableArrayList(shows));
-        nastavciListView.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getId().equals(-1l)).toList()));
         ArrayList<String> tipovi = new ArrayList<>(2);
         tipovi.add("Serija");
         tipovi.add("Film");
@@ -77,10 +70,22 @@ public class EditShowsController {
         zanroviListView.setItems(FXCollections.observableArrayList(List.of(Genre.values())));
         zanroviListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
-
+    private void refresh(){
+        shows = DataBase.getShows();
+        showsWithNewShow = new ArrayList<>();
+        showsWithNewShow.add(new Series(-1l, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
+        showsWithNewShow.get(0).getIdSeqience().add(-1l);
+        showsWithNewShow.addAll(shows);
+        showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow));
+        showComboBox.getSelectionModel().selectFirst();
+        showNastavciComboBox.setItems(FXCollections.observableArrayList(shows));
+        nastavciListView.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getId().equals(-1l)).toList()));
+    }
     @FXML
     private void edit(){
         Show show = showComboBox.getValue();
+        if(show == null)
+            return;
         if(!show.getId().equals(-1l)){
             orginalniNazivTextField.setText(show.getOrginalniNaslov());
             prevedeniNazivTextField.setText(show.getPrevedeniNaslov());
@@ -163,15 +168,47 @@ public class EditShowsController {
     @FXML
     private void addSequel(){
         if(!showNastavciComboBox.getSelectionModel().isEmpty()) {
-            nastavciListView.getItems().add(showNastavciComboBox.getValue());
-            showNastavciComboBox.getItems().remove(showNastavciComboBox.getSelectionModel().getSelectedIndex());
+            ArrayList<Show> showsSequence = new ArrayList<>();
+            for(Long id: showNastavciComboBox.getValue().getIdSeqience())
+                showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
+            nastavciListView.getItems().addAll(showsSequence);
+            showNastavciComboBox.getItems().removeAll(showsSequence);
         }
     }
     @FXML
     private void removeSequel(){
         if(nastavciListView.getSelectionModel().getSelectedItem() != null && !nastavciListView.getSelectionModel().getSelectedItem().getId().equals(-1l)) {
-            showNastavciComboBox.getItems().add(nastavciListView.getSelectionModel().getSelectedItem());
-            nastavciListView.getItems().remove(nastavciListView.getSelectionModel().getSelectedIndex());
+            ArrayList<Show> showsSequence = new ArrayList<>();
+            for(Long id: nastavciListView.getSelectionModel().getSelectedItem().getIdSeqience())
+                showsSequence.add(shows.stream().filter(show -> show.getId().equals(id)).toList().get(0));
+            nastavciListView.getItems().removeAll(showsSequence);
+            showNastavciComboBox.getItems().addAll(showsSequence);
+            sequelSearch();
+        }
+    }
+    @FXML
+    private void moveSequelUp() {
+        if (nastavciListView.getSelectionModel().getSelectedItem() != null && nastavciListView.getSelectionModel().getSelectedIndex() > 0) {
+            Show temp = nastavciListView.getSelectionModel().getSelectedItem();
+            nastavciListView.getItems().set(nastavciListView.getSelectionModel().getSelectedIndex(), nastavciListView.getItems().get(nastavciListView.getSelectionModel().getSelectedIndex() - 1));
+            nastavciListView.getItems().set(nastavciListView.getSelectionModel().getSelectedIndex() - 1, temp);
+            nastavciListView.getSelectionModel().clearAndSelect(nastavciListView.getSelectionModel().getSelectedIndex() - 1);
+        }
+    }
+    @FXML
+    private void moveSequelDown(){
+        if (nastavciListView.getSelectionModel().getSelectedItem() != null && nastavciListView.getSelectionModel().getSelectedIndex() < (nastavciListView.getItems().size() - 1)) {
+            Show temp = nastavciListView.getSelectionModel().getSelectedItem();
+            nastavciListView.getItems().set(nastavciListView.getSelectionModel().getSelectedIndex(), nastavciListView.getItems().get(nastavciListView.getSelectionModel().getSelectedIndex() + 1));
+            nastavciListView.getItems().set(nastavciListView.getSelectionModel().getSelectedIndex() + 1, temp);
+            nastavciListView.getSelectionModel().clearAndSelect(nastavciListView.getSelectionModel().getSelectedIndex() + 1);
+        }
+    }
+    @FXML
+    private void delete(){
+        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1l)) {
+            DataBase.deleteShow(showComboBox.getValue());
+            refresh();
         }
     }
     @FXML
@@ -281,6 +318,6 @@ public class EditShowsController {
                     Main.pogresanUnosPodataka(greske);
             }
         }
-        initialize();
+        refresh();
     }
 }
