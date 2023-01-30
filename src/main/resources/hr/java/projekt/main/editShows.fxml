@@ -201,7 +201,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </DatePicker>
-            <Button mnemonicParsing="false" text="Makni nastavak" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
+            <Button mnemonicParsing="false" onAction="#removeSequel" text="Makni nastavak" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12" />
             <DatePicker fx:id="krajDatePicker" GridPane.columnIndex="3" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="5.0" />

@@ -4,11 +4,12 @@ import javafx.scene.image.Image;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public class Movie extends Show{
     private LocalDate releaseDate;
 
-    public Movie(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Long> idSeqience, LocalDate releaseDate) {
+    public Movie(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, Set<Genre> genres, List<Long> idSeqience, LocalDate releaseDate) {
         super(id, orginalniNaslov, prevedeniNaslov, opis, slika, studio, genres, idSeqience);
         this.releaseDate = releaseDate;
     }

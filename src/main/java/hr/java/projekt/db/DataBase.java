@@ -54,7 +54,7 @@ public class DataBase {
                             opisi.get(i),
                             slike.get(i),
                             studiji.get(i),
-                            new ArrayList<>(),
+                            new HashSet<>(),
                             null,
                             new StartEndDate(
                                     rs.getDate("START_DATE").toLocalDate(),
@@ -74,7 +74,7 @@ public class DataBase {
                             opisi.get(i),
                             slike.get(i),
                             studiji.get(i),
-                            new ArrayList<>(),
+                            new HashSet<>(),
                             new ArrayList<>(),
                             rs.getDate("RELEASE_DATE").toLocalDate()
                     ));

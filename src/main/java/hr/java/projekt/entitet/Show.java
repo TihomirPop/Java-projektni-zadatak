@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Show extends Entitet implements Serializable {
     private String orginalniNaslov;
@@ -16,14 +17,13 @@ public abstract class Show extends Entitet implements Serializable {
     private String opis;
     private String slika;
     private String studio;
-    private List<Genre> genres;
-    private List<Show> sequence;
+    private Set<Genre> genres;
     private List<Long> idSeqience;
     //private List<List<Show>> alternatives;
     //List<Review> reviews;
 
 
-    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, List<Genre> genres, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
+    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, Set<Genre> genres, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
         super(id);
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
@@ -84,20 +84,12 @@ public abstract class Show extends Entitet implements Serializable {
         this.studio = studio;
     }
 
-    public List<Genre> getGenres() {
+    public Set<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(Set<Genre> genres) {
         this.genres = genres;
-    }
-
-    public List<Show> getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(List<Show> sequence) {
-        this.sequence = sequence;
     }
 
     public List<Long> getIdSeqience() {
@@ -119,6 +111,6 @@ public abstract class Show extends Entitet implements Serializable {
 
     @Override
     public String toString() {
-        return getId().toString() + " - " + orginalniNaslov;
+        return orginalniNaslov;
     }
 }

@@ -30,25 +30,6 @@ public class MainListController {
     private ImageView imageView;
 
     public void initialize() {
-        Show show;
-        try(ObjectInputStream in = new ObjectInputStream(new FileInputStream("dat/shows/steinsGate"))) {
-            show = (Show)in.readObject();
-            idTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getId().toString()));
-
-
-            naslovaTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getOrginalniNaslov()));
-
-            ArrayList<Show> list = new ArrayList<>();
-            list.add(show);
-            showTableView.setItems(FXCollections.observableList(list));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
 //        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Show> observable, Show oldValue, Show newValue) -> {
 //            try{
 //

@@ -11,9 +11,7 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EditShowsController {
@@ -57,10 +55,11 @@ public class EditShowsController {
     private Label brojEpizodaLabel;
     private FileChooser fileChooser = new FileChooser();
     private List<Show> shows;
-    private List<Show> showsWithNewShow = new ArrayList<>();
+    private List<Show> showsWithNewShow;
 
     public void initialize() {
         shows = DataBase.getShows();
+        showsWithNewShow = new ArrayList<>();
         showsWithNewShow.add(new Series(-1l, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
         showsWithNewShow.get(0).getIdSeqience().add(-1l);
         showsWithNewShow.addAll(shows);
@@ -88,10 +87,11 @@ public class EditShowsController {
             lokacijaSlikeLabel.setText(show.getSlika());
             studioTextField.setText(show.getStudio());
             showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> !show.getIdSeqience().contains(s.getId())).toList()));
-            nastavciListView.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> show.getIdSeqience().contains(s.getId())).collect(Collectors.toList())));
+            nastavciListView.setItems(FXCollections.observableArrayList(show.getIdSeqience().stream().map(id -> shows.stream().filter(s -> s.getId().equals(id)).toList().get(0)).collect(Collectors.toList())));
             opisTextArea.setText(show.getOpis());
-            int prviZanar = show.getGenres().get(0).ordinal();
+            int prviZanar = show.getGenres().stream().toList().get(0).ordinal();
             int ostaliZanrovi[] = show.getGenres().stream().skip(1).mapToInt(Enum::ordinal).toArray();
+            zanroviListView.getSelectionModel().clearSelection();
             zanroviListView.getSelectionModel().selectIndices(prviZanar, ostaliZanrovi);
             if(show instanceof Series series){
                 tipComboBox.getSelectionModel().selectFirst();
@@ -162,8 +162,16 @@ public class EditShowsController {
     }
     @FXML
     private void addSequel(){
-        if(!showNastavciComboBox.getSelectionModel().isEmpty()){
+        if(!showNastavciComboBox.getSelectionModel().isEmpty()) {
             nastavciListView.getItems().add(showNastavciComboBox.getValue());
+            showNastavciComboBox.getItems().remove(showNastavciComboBox.getSelectionModel().getSelectedIndex());
+        }
+    }
+    @FXML
+    private void removeSequel(){
+        if(nastavciListView.getSelectionModel().getSelectedItem() != null && !nastavciListView.getSelectionModel().getSelectedItem().getId().equals(-1l)) {
+            showNastavciComboBox.getItems().add(nastavciListView.getSelectionModel().getSelectedItem());
+            nastavciListView.getItems().remove(nastavciListView.getSelectionModel().getSelectedIndex());
         }
     }
     @FXML
@@ -175,7 +183,7 @@ public class EditShowsController {
             String studio = studioTextField.getText();
             List<Long> sequels = nastavciListView.getItems().stream().mapToLong(Show::getId).boxed().collect(Collectors.toList());
             String opis = opisTextArea.getText();
-            List<Genre> genres = zanroviListView.getSelectionModel().getSelectedItems();
+            Set<Genre> genres = new HashSet<>(zanroviListView.getSelectionModel().getSelectedItems());
             String tip = tipComboBox.getValue();
             LocalDate pocetak = pocetakDatePicker.getValue();
             LocalDate kraj = krajDatePicker.getValue();
@@ -273,5 +281,6 @@ public class EditShowsController {
                     Main.pogresanUnosPodataka(greske);
             }
         }
+        initialize();
     }
 }
