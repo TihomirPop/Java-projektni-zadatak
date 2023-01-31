@@ -6,11 +6,13 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -65,6 +67,7 @@ public class MainListController {
     List<Show> showList;
 
     public void initialize() {
+        Platform.runLater(() -> takeFocus.requestFocus());
         showList = DataBase.getShows();
 
         imgTableColumn.setCellValueFactory(new PropertyValueFactory<>("imageView"));
@@ -119,13 +122,12 @@ public class MainListController {
 
         ocjeneComboBox.setItems(FXCollections.observableList(Arrays.stream(Score.values()).toList()));
 
-//        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Show> observable, Show oldValue, Show newValue) -> {
-//            try{
-//
-//            }catch (NullPointerException e){
-//                System.out.println(e.getMessage());
-//            }
-//        });
+        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ImageShow<Show>> observable, ImageShow<Show> oldValue, ImageShow<Show> newValue) -> {
+            if(newValue != null) {
+                Main.currentShow = newValue.getShow();
+                Main.prikaziScene(new FXMLLoader(Main.class.getResource("showView.fxml")));
+            }
+        });
     }
 
     @FXML

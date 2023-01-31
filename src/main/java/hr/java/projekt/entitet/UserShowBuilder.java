@@ -5,7 +5,7 @@ public class UserShowBuilder {
     private User user;
     private Show show;
     private Score score;
-    private String comment;
+    private Integer watched;
 
     UserShowBuilder(Long id){
         this.id = id;
@@ -30,12 +30,12 @@ public class UserShowBuilder {
         return this;
     }
 
-    public UserShowBuilder saComment(String comment) {
-        this.comment = comment;
+    public UserShowBuilder saWatched(Integer watched) {
+        this.watched = watched;
         return this;
     }
 
     public UserShow createUserShow() {
-        return new UserShow(id, user, show, score, comment);
+        return new UserShow(id, user, show, score, watched);
     }
 }

@@ -6,16 +6,15 @@ public class UserShow extends Entitet implements Serializable {
     private User user;
     private Show show;
     private Score score;
-    private String comment;
+    private Integer watched;
 
-    UserShow(Long id, User user, Show show, Score score, String comment) {
+    UserShow(Long id, User user, Show show, Score score, Integer watched) {
         super(id);
         this.user = user;
         this.show = show;
         this.score = score;
-        this.comment = comment;
+        this.watched = watched;
     }
-
 
     public User getUser() {
         return user;
@@ -41,11 +40,11 @@ public class UserShow extends Entitet implements Serializable {
         this.score = score;
     }
 
-    public String getComment() {
-        return comment;
+    public Integer getWatched() {
+        return watched;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setWatched(Integer watched) {
+        this.watched = watched;
     }
 }

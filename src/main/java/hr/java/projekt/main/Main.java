@@ -1,5 +1,6 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.Show;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.util.EmailVerification;
 import javafx.application.Application;
@@ -18,6 +19,7 @@ import java.util.List;
 public class Main extends Application {
     static Stage mainStage;
     static User currentUser = null;
+    static Show currentShow = null;
     static Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     @Override
