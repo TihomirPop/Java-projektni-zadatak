@@ -27,10 +27,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MainListController {
     @FXML
@@ -64,11 +61,14 @@ public class MainListController {
     private ToggleGroup tipToggleGroup = new ToggleGroup();
     private ToggleGroup ocjeneFilterToggleGroup = new ToggleGroup();
 
-    List<Show> showList;
+    private List<Show> showList;
+    private Map<Show, Double> prosjekMap = new HashMap<>();
 
     public void initialize() {
         Platform.runLater(() -> takeFocus.requestFocus());
         showList = DataBase.getShows();
+        for(Show show: showList)
+            prosjekMap.put(show, show.getProsjek());
 
         imgTableColumn.setCellValueFactory(new PropertyValueFactory<>("imageView"));
         naslovTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getShow().getPrevedeniNaslov()));
@@ -88,7 +88,7 @@ public class MainListController {
                 string = "Film";
             return new SimpleStringProperty(string);
         });
-        prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty("9.99"));
+        prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()))));
         showTableView.setRowFactory(tableView -> {
             final TableRow<ImageShow<Show>> row = new TableRow<>();
 
@@ -149,12 +149,12 @@ public class MainListController {
             filteredList = filteredList.stream().filter(show -> show instanceof Movie).toList();
         if(!zanrovi.isEmpty())
             filteredList = filteredList.stream().filter(show -> show.getGenres().containsAll(zanrovi)).toList();
-        /*if(ocjena != null){
+        if(ocjena != null){
             if(vece)
-                filteredList = filteredList.stream().filter(show -> (show.getProsjek >= ocjena.getScore())).toList();
+                filteredList = filteredList.stream().filter(show -> (prosjekMap.get(show) >= ocjena.getScore())).toList();
             else if(manje)
-                filteredList = filteredList.stream().filter(show -> (show.getProsjek <= ocjena.getScore())).toList();
-        }*/
+                filteredList = filteredList.stream().filter(show -> (prosjekMap.get(show) <= ocjena.getScore())).toList();
+        }
         showTableView.setItems(FXCollections.observableList(ImageShows.toImageShowList(filteredList)));
     }
     @FXML

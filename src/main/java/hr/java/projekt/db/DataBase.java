@@ -313,4 +313,18 @@ public class DataBase {
             throw new RuntimeException(e);
         }
     }
+
+    public static double getShowProsjek(Show show) {
+        try (Connection connection = spajanjeNaBazu()) {
+            List<Integer> ocjene = new ArrayList<>();
+            PreparedStatement userShowPS = connection.prepareStatement("SELECT * FROM USER_SHOWS WHERE SHOW_ID = ?");
+            userShowPS.setLong(1, show.getId());
+            ResultSet rs = userShowPS.executeQuery();
+            while(rs.next())
+                ocjene.add(rs.getInt("SCORE"));
+            return ocjene.stream().mapToDouble(Integer::doubleValue).average().orElse(0);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

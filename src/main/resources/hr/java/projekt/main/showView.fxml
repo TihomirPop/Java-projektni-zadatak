@@ -79,7 +79,7 @@
                      </GridPane.margin>
                   </Label>
                   <Label text="Opis:" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM" />
-                  <Label text="0.00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                  <Label fx:id="prosjek" text="0.00" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets bottom="20.0" left="35.0" />
                      </GridPane.margin>

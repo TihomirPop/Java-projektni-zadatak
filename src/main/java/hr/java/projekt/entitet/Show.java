@@ -1,5 +1,6 @@
 package hr.java.projekt.entitet;
 
+import hr.java.projekt.db.DataBase;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,11 +20,8 @@ public abstract class Show extends Entitet implements Serializable {
     private String studio;
     private Set<Genre> genres;
     private List<Long> idSeqience;
-    //private List<List<Show>> alternatives;
-    //List<Review> reviews;
 
-
-    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, Set<Genre> genres, List<Long> idSeqience/*List<List<Show>> alternatives*/) {
+    public Show(Long id, String orginalniNaslov, String prevedeniNaslov, String opis, String slika, String studio, Set<Genre> genres, List<Long> idSeqience) {
         super(id);
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
@@ -100,17 +98,12 @@ public abstract class Show extends Entitet implements Serializable {
         this.idSeqience = idSeqience;
     }
 
-    /*
-    public List<List<Show>> getAlternatives() {
-        return alternatives;
-    }
-
-    public void setAlternatives(List<List<Show>> alternatives) {
-        this.alternatives = alternatives;
-    }*/
-
     @Override
     public String toString() {
         return orginalniNaslov;
+    }
+
+    public Double getProsjek(){
+        return DataBase.getShowProsjek(this);
     }
 }

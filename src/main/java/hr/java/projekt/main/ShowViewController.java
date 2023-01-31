@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
 
 public class ShowViewController {
@@ -44,6 +45,8 @@ public class ShowViewController {
     private Button spremi;
     @FXML
     private Button obrisi;
+    @FXML
+    private Label prosjek;
 
     private Show show;
     private UserShow userShow;
@@ -60,6 +63,7 @@ public class ShowViewController {
         opis.setText(show.getOpis());
         studio.setText(studio.getText() + " " + show.getStudio());
         ocjena.setItems(FXCollections.observableList(Arrays.stream(Score.values()).toList()));
+        prosjek.setText(String.format("%.2f", show.getProsjek()));
 
         List<Genre> genres = show.getGenres().stream().toList();
         String string = zanrovi.getText() + " " + genres.get(0).toString().substring(0,1) + genres.get(0).toString().substring(1).toLowerCase();
