@@ -61,6 +61,10 @@ public class IzbornikController {
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("mainList.fxml")));
     }
     @FXML
+    private void myShows(){
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("myList.fxml")));
+    }
+    @FXML
     private void mojProfil(){
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("mojProfil.fxml")));
     }

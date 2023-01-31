@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -327,4 +328,102 @@ public class DataBase {
             throw new RuntimeException(e);
         }
     }
+
+    public static List<Show> getUsersShows(User user) {
+        List<Show> shows = getShows();
+        List<Long> showIds = new ArrayList<>();
+
+        try (Connection connection = spajanjeNaBazu()) {
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM USER_SHOWS WHERE USER_ID = " + user.getId().toString());
+            while(rs.next())
+                showIds.add(rs.getLong("SHOW_ID"));
+
+            return shows.stream().filter(show -> showIds.contains(show.getId())).collect(Collectors.toList());
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*public static List<UserShow> getUserShows(User user) {
+        try (Connection connection = spajanjeNaBazu()) {
+            List<UserShow> userShowList = new ArrayList<>();
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM USER_SHOWS WHERE USER_ID = " + user.getId().toString());
+            while (rs.next()){
+                UserShowBuilder userShowBuilder = new UserShowBuilder(user);
+                userShowBuilder.saShow(getShow(rs.getLong("SHOW_ID"), connection));
+                userShowBuilder.saId(rs.getLong("ID"));
+                userShowBuilder.saScore(Score.getScoreFromInt(rs.getInt("SCORE")));
+                userShowBuilder.saWatched(rs.getInt("WATCHED"));
+                userShowList.add(userShowBuilder.build());
+            }
+            return userShowList;
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Show getShow(Long showId, Connection connection) throws SQLException {
+        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM SHOWS WHERE ID = " + showId.toString());
+        rs.next();
+        String orginalniNaslov = rs.getString("ORGINALNI_NASLOV");
+        String prevedeniNaslov = rs.getString("PREVEDENI_NASLOV");
+        String opis = rs.getString("OPIS");
+        String slika = rs.getString("SLIKA");
+        String studio = rs.getString("STUDIO");
+
+        Set<Genre> genres = new HashSet<>();
+        rs = connection.createStatement().executeQuery("SELECT * FROM SHOWS_GENRES WHERE ID = " + showId.toString());
+        while (rs.next())
+            genres.add(Genre.valueOf(rs.getString("GENRE")));
+
+        Map<Long, Long> sequelMap = new HashMap<>();
+        rs = connection.createStatement().executeQuery("SELECT * FROM SEQUELS");
+        while (rs.next())
+            sequelMap.put(rs.getLong("SHOW_ID"), rs.getLong("SEQUEL_ID"));
+
+        Long pocetak = showId;
+        ArrayList<Long> idSequence = new ArrayList<>();
+        while(sequelMap.containsValue(pocetak)) {
+            Long finalPocetak = pocetak;
+            pocetak = sequelMap.keySet().stream().filter(key -> sequelMap.get(key).equals(finalPocetak)).toList().get(0);
+        }
+        idSequence.add(pocetak);
+        while(sequelMap.containsKey(pocetak)){
+            pocetak = sequelMap.get(pocetak);
+            idSequence.add(pocetak);
+        }
+        if(idSequence.isEmpty())
+            idSequence.add(showId);
+
+        rs = connection.createStatement().executeQuery("SELECT * FROM SERIES WHERE ID = " + showId.toString());
+        if(rs.next()){
+            return new Series(
+                    showId,
+                    orginalniNaslov,
+                    prevedeniNaslov,
+                    opis,
+                    slika,
+                    studio,
+                    genres,
+                    idSequence,
+                    new StartEndDate(
+                            rs.getDate("START_DATE ").toLocalDate(),
+                            rs.getDate("END_DATE").toLocalDate()
+                    ),
+                    rs.getInt("NUMBER_OF_EPISODES")
+            );
+        }
+        rs = connection.createStatement().executeQuery("SELECT * FROM MOVIES WHERE ID = " + showId.toString());
+        return new Movie(
+                showId,
+                orginalniNaslov,
+                prevedeniNaslov,
+                opis,
+                slika,
+                studio,
+                genres,
+                idSequence,
+                rs.getDate("RELEASE_DATE").toLocalDate()
+        );
+    }*/
 }

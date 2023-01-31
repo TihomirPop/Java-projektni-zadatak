@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1085.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.java.projekt.main.MainListController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1085.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.java.projekt.main.MyListController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="1500.0" minWidth="10.0" percentWidth="60.0" prefWidth="1000.0" />
@@ -31,7 +31,7 @@
             <TableColumn fx:id="naslovTableColumn" maxWidth="300.0" prefWidth="300.0" text="Naslov" />
             <TableColumn fx:id="zanroviTableColumn" maxWidth="300.0" prefWidth="300.0" sortable="false" text="Žanrovi" />
           <TableColumn fx:id="tipTableColumn" maxWidth="117.0" prefWidth="117.0" text="Tip" />
-            <TableColumn fx:id="prosjekTableColumn" maxWidth="90.0" prefWidth="90.0" text="Prosjek" />
+            <TableColumn fx:id="ocjenaTableColumn" maxWidth="90.0" prefWidth="90.0" text="Ocjena" />
         </columns>
       </TableView>
       <GridPane fx:id="takeFocus" GridPane.columnIndex="1" GridPane.rowIndex="1">
