@@ -7,8 +7,8 @@ public class UserShowBuilder {
     private Score score;
     private Integer watched;
 
-    UserShowBuilder(Long id){
-        this.id = id;
+    public UserShowBuilder(User user){
+        this.user = user;
     }
     public UserShowBuilder saId(Long id) {
         this.id = id;
@@ -35,7 +35,7 @@ public class UserShowBuilder {
         return this;
     }
 
-    public UserShow createUserShow() {
+    public UserShow build() {
         return new UserShow(id, user, show, score, watched);
     }
 }

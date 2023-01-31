@@ -1,6 +1,7 @@
 package hr.java.projekt.db;
 
 import hr.java.projekt.entitet.*;
+import hr.java.projekt.main.Main;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -210,10 +211,10 @@ public class DataBase {
 
         updateSequals(show);
     }
-
     public static void deleteShow(Show show){
         try(Connection connection = spajanjeNaBazu()) {
             Files.delete(Path.of(show.getSlika()));
+            connection.createStatement().executeUpdate("DELETE FROM USER_SHOWS WHERE SHOW_ID = " + show.getId().toString());
             connection.createStatement().executeUpdate("DELETE FROM SHOWS_GENRES WHERE ID = " + show.getId().toString());
 
             if(show instanceof Series series)
@@ -241,7 +242,6 @@ public class DataBase {
             throw new RuntimeException(e);
         }
     }
-
     private static void updateSequals(Show show){
         try(Connection connection = spajanjeNaBazu()) {
             connection.setAutoCommit(false);
@@ -259,6 +259,56 @@ public class DataBase {
                 sequalPS.executeUpdate();
             }
             connection.commit();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void addUserShow(UserShow userShow){
+        try (Connection connection = spajanjeNaBazu()) {
+            PreparedStatement userShowPS = connection.prepareStatement("INSERT INTO USER_SHOWS (USER_ID, SHOW_ID, SCORE, WATCHED) VALUES (?, ?, ?, ?)");
+            userShowPS.setLong(1, userShow.getUser().getId());
+            userShowPS.setLong(2, userShow.getShow().getId());
+            userShowPS.setInt(3, userShow.getScore().getScore());
+            userShowPS.setInt(4, userShow.getWatched());
+            userShowPS.executeUpdate();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void deleteUserShow(UserShow userShow){
+        try (Connection connection = spajanjeNaBazu()) {
+            connection.createStatement().executeUpdate("DELETE FROM USER_SHOWS WHERE ID = " + userShow.getId().toString());
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void updateUserShow(UserShow userShow){
+        try (Connection connection = spajanjeNaBazu()) {
+            PreparedStatement userShowPS = connection.prepareStatement("UPDATE USER_SHOWS SET SCORE = ?, WATCHED = ? WHERE ID = ?");
+            userShowPS.setInt(1, userShow.getScore().getScore());
+            userShowPS.setInt(2, userShow.getWatched());
+            userShowPS.setLong(3, userShow.getId());
+            userShowPS.executeUpdate();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static UserShow getUserShow(User user, Show show){
+        try (Connection connection = spajanjeNaBazu()) {
+            PreparedStatement userShowPS = connection.prepareStatement("SELECT * FROM USER_SHOWS WHERE USER_ID = ? AND SHOW_ID = ?");
+            userShowPS.setLong(1, user.getId());
+            userShowPS.setLong(2, show.getId());
+            ResultSet rs = userShowPS.executeQuery();
+            if(rs.next()){
+                UserShowBuilder userShowBuilder = new UserShowBuilder(user);
+                userShowBuilder.saShow(show);
+                userShowBuilder.saId(rs.getLong("ID"));
+                userShowBuilder.saScore(Score.getScoreFromInt(rs.getInt("SCORE")));
+                userShowBuilder.saWatched(rs.getInt("WATCHED"));
+                return userShowBuilder.build();
+            }
+            else
+                return null;
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }

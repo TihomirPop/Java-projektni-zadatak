@@ -28,6 +28,22 @@ public enum Score {
         return opis;
     }
 
+    public static Score getScoreFromInt(Integer intScore){
+        return switch (intScore) {
+            case 1 -> Score.APPALLING;
+            case 2 -> Score.HORRIBLE;
+            case 3 -> Score.VERYBAD;
+            case 4 -> Score.BAD;
+            case 5 -> Score.AVERAGE;
+            case 6 -> Score.FINE;
+            case 7 -> Score.GOOD;
+            case 8 -> Score.VERYGOOD;
+            case 9 -> Score.GREAT;
+            case 10 -> Score.MASTERPIECE;
+            default -> throw new RuntimeException("Critical error, nije moguce doci do ovog dijela koda!");
+        };
+    }
+
     @Override
     public String toString() {
         return score.toString() + " - " + opis;
