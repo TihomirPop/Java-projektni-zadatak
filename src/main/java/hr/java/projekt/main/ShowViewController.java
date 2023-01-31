@@ -136,6 +136,7 @@ public class ShowViewController {
         }
         else
             Main.pogresanUnosPodataka(greske);
+        prosjek.setText(String.format("%.2f", show.getProsjek()));
     }
 
     private void addUserShow(Score userOcjena, Integer epizodeInt) {
@@ -159,6 +160,7 @@ public class ShowViewController {
             userShow = null;
             ocjena.getSelectionModel().clearSelection();
             epizodeTextField.setText("");
+            prosjek.setText(String.format("%.2f", show.getProsjek()));
         }
     }
     @FXML
