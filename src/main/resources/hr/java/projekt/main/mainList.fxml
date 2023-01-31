@@ -34,7 +34,7 @@
             <TableColumn fx:id="prosjekTableColumn" maxWidth="90.0" prefWidth="90.0" text="Ocjena" />
         </columns>
       </TableView>
-      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <GridPane fx:id="takeFocus" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="33.3333" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="33.3333" prefWidth="100.0" />
@@ -47,17 +47,17 @@
             <RowConstraints minHeight="10.0" percentHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField fx:id="nazivTextField" maxWidth="240.0" prefWidth="240.0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <TextField fx:id="nazivTextField" maxWidth="240.0" onKeyTyped="#filterList" prefWidth="240.0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets right="20.0" />
                </GridPane.margin>
             </TextField>
-            <ListView fx:id="zanroviListView" maxWidth="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="3">
+            <ListView fx:id="zanroviListView" maxWidth="200.0" minWidth="200.0" onMouseClicked="#clickZanrovi" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="3">
                <GridPane.margin>
                   <Insets bottom="30.0" left="10.0" top="17.0" />
                </GridPane.margin>
             </ListView>
-            <ComboBox fx:id="ocjeneComboBox" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <ComboBox fx:id="ocjeneComboBox" onAction="#filterList" onMouseClicked="#clickOcjena" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets right="30.0" />
                </GridPane.margin>
@@ -96,12 +96,12 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <RadioButton fx:id="serijaRadioButton" mnemonicParsing="false" text="Serija" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                  <RadioButton fx:id="serijaRadioButton" mnemonicParsing="false" onMouseClicked="#clickSeries" text="Serija" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="50.0" top="5.0" />
                      </GridPane.margin>
                   </RadioButton>
-                  <RadioButton fx:id="filmRadioButton" mnemonicParsing="false" text="Film" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                  <RadioButton fx:id="filmRadioButton" mnemonicParsing="false" onMouseClicked="#clickFilm" text="Film" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets bottom="5.0" right="50.0" top="5.0" />
                      </GridPane.margin>
@@ -117,12 +117,12 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <RadioButton fx:id="veceRadioButton" mnemonicParsing="false" text="Veće ili jednako" GridPane.valignment="TOP">
+                  <RadioButton fx:id="veceRadioButton" mnemonicParsing="false" onMouseClicked="#clickVece" text="Veće ili jednako" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="5.0" />
                      </GridPane.margin>
                   </RadioButton>
-                  <RadioButton fx:id="manjeRadioButton" mnemonicParsing="false" text="Manje ili jednako" GridPane.columnIndex="1" GridPane.valignment="TOP">
+                  <RadioButton fx:id="manjeRadioButton" mnemonicParsing="false" onMouseClicked="#clickManje" text="Manje ili jednako" GridPane.columnIndex="1" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets top="5.0" />
                      </GridPane.margin>

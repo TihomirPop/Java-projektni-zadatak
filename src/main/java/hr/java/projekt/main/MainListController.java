@@ -15,7 +15,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.io.*;
@@ -23,13 +26,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 public class MainListController {
     @FXML
     private TableView<ImageShow<Show>> showTableView;
-
     @FXML
     private TableColumn<ImageShow<Show>, String> imgTableColumn;
     @FXML
@@ -54,8 +57,16 @@ public class MainListController {
     private RadioButton veceRadioButton;
     @FXML
     private RadioButton manjeRadioButton;
+    @FXML
+    private GridPane takeFocus;
+    private ToggleGroup tipToggleGroup = new ToggleGroup();
+    private ToggleGroup ocjeneFilterToggleGroup = new ToggleGroup();
+
+    List<Show> showList;
 
     public void initialize() {
+        showList = DataBase.getShows();
+
         imgTableColumn.setCellValueFactory(new PropertyValueFactory<>("imageView"));
         naslovTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getShow().getPrevedeniNaslov()));
         zanroviTableColumn.setCellValueFactory(data -> {
@@ -75,7 +86,6 @@ public class MainListController {
             return new SimpleStringProperty(string);
         });
         prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty("9.99"));
-        showTableView.setItems(FXCollections.observableList((ImageShows.toImageShowList(DataBase.getShows()))));
         showTableView.setRowFactory(tableView -> {
             final TableRow<ImageShow<Show>> row = new TableRow<>();
 
@@ -95,9 +105,19 @@ public class MainListController {
                     timeline.play();
                 }
             });
-
             return row;
         });
+        showTableView.setItems(FXCollections.observableList((ImageShows.toImageShowList(showList))));
+
+        serijaRadioButton.setToggleGroup(tipToggleGroup);
+        filmRadioButton.setToggleGroup(tipToggleGroup);
+        veceRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
+        manjeRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
+
+        zanroviListView.setItems(FXCollections.observableArrayList(List.of(Genre.values())));
+        zanroviListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        ocjeneComboBox.setItems(FXCollections.observableList(Arrays.stream(Score.values()).toList()));
 
 //        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Show> observable, Show oldValue, Show newValue) -> {
 //            try{
@@ -107,4 +127,72 @@ public class MainListController {
 //            }
 //        });
     }
+
+    @FXML
+    private void filterList(){
+        String naziv = nazivTextField.getText();
+        Boolean serija = serijaRadioButton.isSelected();
+        Boolean film = filmRadioButton.isSelected();
+        List<Genre> zanrovi = zanroviListView.getSelectionModel().getSelectedItems();
+        Score ocjena = ocjeneComboBox.getValue();
+        Boolean vece = veceRadioButton.isSelected();
+        Boolean manje = manjeRadioButton.isSelected();
+        List<Show> filteredList = showList;
+
+        if(!naziv.isEmpty())
+            filteredList = filteredList.stream().filter(show -> (show.getOrginalniNaslov().toLowerCase().contains(naziv.toLowerCase()) || show.getPrevedeniNaslov().toLowerCase().contains(naziv.toLowerCase()))).toList();
+        if(serija)
+            filteredList = filteredList.stream().filter(show -> show instanceof Series).toList();
+        else if(film)
+            filteredList = filteredList.stream().filter(show -> show instanceof Movie).toList();
+        if(!zanrovi.isEmpty())
+            filteredList = filteredList.stream().filter(show -> show.getGenres().containsAll(zanrovi)).toList();
+        /*if(ocjena != null){
+            if(vece)
+                filteredList = filteredList.stream().filter(show -> (show.getProsjek >= ocjena.getScore())).toList();
+            else if(manje)
+                filteredList = filteredList.stream().filter(show -> (show.getProsjek <= ocjena.getScore())).toList();
+        }*/
+        showTableView.setItems(FXCollections.observableList(ImageShows.toImageShowList(filteredList)));
+    }
+    @FXML
+    private void clickSeries(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY))
+            serijaRadioButton.setSelected(false);
+        filterList();
+    }
+    @FXML
+    private void clickFilm(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY))
+            filmRadioButton.setSelected(false);
+        filterList();
+    }
+    @FXML
+    private void clickVece(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY))
+            veceRadioButton.setSelected(false);
+        filterList();
+    }
+    @FXML
+    private void clickManje(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY))
+            manjeRadioButton.setSelected(false);
+        filterList();
+    }
+    @FXML
+    private void clickZanrovi(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY))
+            zanroviListView.getSelectionModel().clearSelection();
+        filterList();
+    }
+    @FXML
+    private void clickOcjena(MouseEvent event){
+        if(event.getButton().equals(MouseButton.SECONDARY)) {
+            ocjeneComboBox.getSelectionModel().clearSelection();
+            takeFocus.requestFocus();
+            filterList();
+        }
+    }
+
+
 }

@@ -27,4 +27,9 @@ public enum Score {
     public String getOpis() {
         return opis;
     }
+
+    @Override
+    public String toString() {
+        return score.toString() + " - " + opis;
+    }
 }
