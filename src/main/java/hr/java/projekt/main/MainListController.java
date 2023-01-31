@@ -65,6 +65,7 @@ public class MainListController {
     private Map<Show, Double> prosjekMap = new HashMap<>();
 
     public void initialize() {
+        //new Thread(new LoadShowsThread(showList, prosjekMap, showTableView)).start();
         Platform.runLater(() -> takeFocus.requestFocus());
         showList = DataBase.getShows();
         for(Show show: showList)
