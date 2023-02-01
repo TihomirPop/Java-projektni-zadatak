@@ -5,8 +5,6 @@ import java.io.Serializable;
 public abstract class Entitet implements Serializable {
     private Long id;
 
-    public Entitet() {}
-
     public Entitet(Long id) {
         this.id = id;
     }
