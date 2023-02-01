@@ -84,6 +84,19 @@ public class MojProfilController {
             return;
         }
 
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Spremanje");
+        alert.setHeaderText("Želite li spremiti podatke?");
+        ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+        ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+        alert.getButtonTypes().setAll(daButton, neButton);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == daButton)
+                spremiEmailiPassword(username, email, password);
+        });
+    }
+
+    private void spremiEmailiPassword(String username, String email, String password) {
         if(!password.isEmpty())
             Main.currentUser.setPassword(password);
         if(!email.equals(Main.currentUser.getEmail())) {

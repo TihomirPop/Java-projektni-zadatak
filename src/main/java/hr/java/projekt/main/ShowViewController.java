@@ -153,16 +153,36 @@ public class ShowViewController {
         if(greske.isEmpty()){
             Integer epizodeInt = Integer.parseInt(userEpizode);
             if(show instanceof Series series){
-                if(epizodeInt >= 0 && epizodeInt <= series.getNumberOfEpisodes())
-                    addUserShow(userOcjena, epizodeInt);
+                if(epizodeInt >= 0 && epizodeInt <= series.getNumberOfEpisodes()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        if(response == daButton)
+                            addUserShow(userOcjena, epizodeInt);
+                    });
+                }
                 else {
                     greske.add("epizode");
                     Main.pogresanUnosPodataka(greske);
                 }
             }
             else if(show instanceof Movie){
-                if(epizodeInt >= 0 && epizodeInt <= 1)
-                    addUserShow(userOcjena, epizodeInt);
+                if(epizodeInt >= 0 && epizodeInt <= 1) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        if(response == daButton)
+                            addUserShow(userOcjena, epizodeInt);
+                    });
+                }
                 else {
                     greske.add("epizode");
                     Main.pogresanUnosPodataka(greske);
@@ -189,15 +209,28 @@ public class ShowViewController {
     }
 
     @FXML
-    private void obrisi(){
-        if(userShow != null) {
-            DataBase.deleteUserShow(userShow);
-            userShow = null;
-            ocjena.getSelectionModel().clearSelection();
-            epizodeTextField.setText("");
-            prosjek.setText(String.format("%.2f", show.getProsjek()));
+    private void obrisi() {
+        if (userShow != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Brisanje");
+            alert.setHeaderText("Želite li obrisati show?");
+            ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+            ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+            alert.getButtonTypes().setAll(daButton, neButton);
+            alert.showAndWait().ifPresent(response -> {
+                if (response == daButton)
+                    deleteShow();
+            });
         }
     }
+    private void deleteShow() {
+        DataBase.deleteUserShow(userShow);
+        userShow = null;
+        ocjena.getSelectionModel().clearSelection();
+        epizodeTextField.setText("");
+        prosjek.setText(String.format("%.2f", show.getProsjek()));
+    }
+
     @FXML
     private void focus(){
         imageView.requestFocus();
