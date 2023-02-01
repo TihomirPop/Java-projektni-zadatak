@@ -2,6 +2,8 @@ package hr.java.projekt.main;
 
 
 import hr.java.projekt.entitet.User;
+import hr.java.projekt.exceptions.DatotekaException;
+import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Hash;
 import javafx.fxml.FXML;
@@ -28,32 +30,35 @@ public class LoginController {
 
     @FXML
     public void login(){
-        String username = usernameTextField.getText();
-        String password = passwordField.getText();
-        List<User> users = Datoteke.getUsers();
-        List<String> greske = new ArrayList<>();
+        try {
+            String username = usernameTextField.getText();
+            String password = passwordField.getText();
+            List<User> users = Datoteke.getUsers();
+            List<String> greske = new ArrayList<>();
 
-        if(username.isEmpty())
-            greske.add("username");
-        if(password.isEmpty())
-            greske.add("password");
+            if (username.isEmpty())
+                greske.add("korisnicko ime");
+            if (password.isEmpty())
+                greske.add("lozinka");
 
-        if(greske.isEmpty()){
-            try {
-                User user = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
-                Main.currentUser = user;
-                goToMainList();
-            }catch (ArrayIndexOutOfBoundsException e){
-                logger.warn(e.getMessage(), e);
-                System.out.println(e.getMessage());
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Pogrešan unos podataka");
-                alert.setHeaderText("Korisnicko ime ili lozinka se ne podudaraju");
-                alert.showAndWait();
-            }
+            if (greske.isEmpty()) {
+                try {
+                    User user = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
+                    Main.currentUser = user;
+                    goToMainList();
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Pogrešan unos podataka");
+                    alert.setHeaderText("Korisnicko ime ili lozinka se ne podudaraju");
+                    alert.showAndWait();
+                    throw new KriviInputException(e);
+                }
+            } else
+                Main.pogresanUnosPodataka(greske);
+        } catch (DatotekaException | KriviInputException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         }
-        else
-            Main.pogresanUnosPodataka(greske);
     }
 
     @FXML

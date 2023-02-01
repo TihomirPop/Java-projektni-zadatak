@@ -1,6 +1,10 @@
 package hr.java.projekt.entitet;
 
 import hr.java.projekt.db.DataBase;
+import hr.java.projekt.exceptions.BazaPodatakaException;
+import hr.java.projekt.main.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Show extends Entitet implements Shows {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private String orginalniNaslov;
     private String prevedeniNaslov;
     private String opis;
@@ -101,7 +106,13 @@ public abstract class Show extends Entitet implements Shows {
     }
     @Override
     public Double getProsjek(){
-        return DataBase.getShowProsjek(this);
+        try {
+            return DataBase.getShowProsjek(this);
+        } catch (BazaPodatakaException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return null;
     }
     public static Show odrediNajboljiShow(List<Show> shows) {
         Double maxProsjek = 0.;

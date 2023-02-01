@@ -1,6 +1,7 @@
 package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.User;
+import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.main.Main;
 import javafx.fxml.FXMLLoader;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class Datoteke {
     public static final String USERS_PATH = "dat/users.txt";
     public static final int SIZE_OF_USERS = 6;
 
-    public static List<User> getUsers(){
+    public static List<User> getUsers() throws DatotekaException{
         try(BufferedReader reader = new BufferedReader(new FileReader(USERS_PATH))) {
             System.out.println("Loading users…");
             logger.info("Loading users...");
@@ -38,12 +39,11 @@ public class Datoteke {
             }
             return users;
         }catch (IOException e){
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw new DatotekaException(e);
         }
     }
 
-    public static void addUser(User user){
+    public static void addUser(User user) throws DatotekaException{
         try (BufferedWriter out = new BufferedWriter(new FileWriter(USERS_PATH, true))) {
             OptionalLong optionalId = getUsers().stream().mapToLong(p -> p.getId()).max();
             Long id = optionalId.getAsLong() + 1;
@@ -55,12 +55,11 @@ public class Datoteke {
             out.write('\n' + user.getVerified().toString());
             Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
         } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
-            System.out.println(e.getMessage());
+            throw new DatotekaException(e);
         }
     }
 
-    public static void editUser(User user){
+    public static void editUser(User user) throws DatotekaException{
         try {
             List<String> userLines = Files.lines(Path.of(USERS_PATH)).collect(Collectors.toList());
             for(int i = 0; i < userLines.size(); i += SIZE_OF_USERS)
@@ -83,7 +82,7 @@ public class Datoteke {
             
             Files.write(Path.of(USERS_PATH), userText.getBytes());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DatotekaException(e);
         }
 
     }

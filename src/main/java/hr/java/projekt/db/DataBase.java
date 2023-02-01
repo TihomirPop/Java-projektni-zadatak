@@ -1,6 +1,7 @@
 package hr.java.projekt.db;
 
 import hr.java.projekt.entitet.*;
+import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.main.Main;
 
 import java.io.FileReader;
@@ -25,7 +26,7 @@ public class DataBase {
         return DriverManager.getConnection(dataBaseUrl, username, password);
     }
 
-    public static List<Show> getShows(){
+    public static List<Show> getShows() throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             List<Show> shows = new ArrayList<>();
             List<Long> ids = new ArrayList<>();
@@ -117,11 +118,11 @@ public class DataBase {
 
             return shows;
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
 
-    public static void addShow(Show show){
+    public static void addShow(Show show) throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             PreparedStatement showPS = connection.prepareStatement("INSERT INTO SHOWS (ORGINALNI_NASLOV, PREVEDENI_NASLOV, OPIS, SLIKA, STUDIO) VALUES (?, ?, ?, ?, ?)");
             showPS.setString(1, show.getOrginalniNaslov());
@@ -164,13 +165,13 @@ public class DataBase {
                 moviePS.executeUpdate();
             }
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
 
         updateSequals(show);
     }
 
-    public static void updateShow(Show show){
+    public static void updateShow(Show show) throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             PreparedStatement showPS = connection.prepareStatement("UPDATE SHOWS SET ORGINALNI_NASLOV = ?, PREVEDENI_NASLOV = ?, OPIS = ?, SLIKA = ?, STUDIO = ? WHERE ID = ?");
             showPS.setString(1, show.getOrginalniNaslov());
@@ -207,12 +208,12 @@ public class DataBase {
                 moviePS.executeUpdate();
             }
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
 
         updateSequals(show);
     }
-    public static void deleteShow(Show show){
+    public static void deleteShow(Show show) throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             Files.delete(Path.of(show.getSlika()));
             connection.createStatement().executeUpdate("DELETE FROM USER_SHOWS WHERE SHOW_ID = " + show.getId().toString());
@@ -232,7 +233,7 @@ public class DataBase {
             show.setIdSeqience(idSequence);
             connection.createStatement().executeUpdate("DELETE FROM SEQUELS WHERE SHOW_ID = " + show.getId().toString());
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
 
         updateSequals(show);
@@ -240,10 +241,10 @@ public class DataBase {
         try(Connection connection = spajanjeNaBazu()) {
             connection.createStatement().executeUpdate("DELETE FROM SHOWS WHERE ID = " + show.getId().toString());
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
-    private static void updateSequals(Show show){
+    private static void updateSequals(Show show) throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             connection.setAutoCommit(false);
             PreparedStatement deletePS = connection.prepareStatement("DELETE FROM SEQUELS  WHERE SHOW_ID = ?");
@@ -261,10 +262,10 @@ public class DataBase {
             }
             connection.commit();
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
-    public static void addUserShow(UserShow userShow){
+    public static void addUserShow(UserShow userShow) throws BazaPodatakaException{
         try (Connection connection = spajanjeNaBazu()) {
             PreparedStatement userShowPS = connection.prepareStatement("INSERT INTO USER_SHOWS (USER_ID, SHOW_ID, SCORE, WATCHED) VALUES (?, ?, ?, ?)");
             userShowPS.setLong(1, userShow.getUser().getId());
@@ -273,17 +274,17 @@ public class DataBase {
             userShowPS.setInt(4, userShow.getWatched());
             userShowPS.executeUpdate();
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
-    public static void deleteUserShow(UserShow userShow){
+    public static void deleteUserShow(UserShow userShow) throws BazaPodatakaException{
         try (Connection connection = spajanjeNaBazu()) {
             connection.createStatement().executeUpdate("DELETE FROM USER_SHOWS WHERE ID = " + userShow.getId().toString());
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
-    public static void updateUserShow(UserShow userShow){
+    public static void updateUserShow(UserShow userShow) throws BazaPodatakaException{
         try (Connection connection = spajanjeNaBazu()) {
             PreparedStatement userShowPS = connection.prepareStatement("UPDATE USER_SHOWS SET SCORE = ?, WATCHED = ? WHERE ID = ?");
             userShowPS.setInt(1, userShow.getScore().getScore());
@@ -291,10 +292,10 @@ public class DataBase {
             userShowPS.setLong(3, userShow.getId());
             userShowPS.executeUpdate();
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
-    public static UserShow getUserShow(User user, Show show){
+    public static UserShow getUserShow(User user, Show show) throws BazaPodatakaException{
         try (Connection connection = spajanjeNaBazu()) {
             PreparedStatement userShowPS = connection.prepareStatement("SELECT * FROM USER_SHOWS WHERE USER_ID = ? AND SHOW_ID = ?");
             userShowPS.setLong(1, user.getId());
@@ -311,11 +312,11 @@ public class DataBase {
             else
                 return null;
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
 
-    public static double getShowProsjek(Show show) {
+    public static double getShowProsjek(Show show) throws BazaPodatakaException{
         try (Connection connection = spajanjeNaBazu()) {
             List<Integer> ocjene = new ArrayList<>();
             PreparedStatement userShowPS = connection.prepareStatement("SELECT * FROM USER_SHOWS WHERE SHOW_ID = ?");
@@ -325,11 +326,11 @@ public class DataBase {
                 ocjene.add(rs.getInt("SCORE"));
             return ocjene.stream().mapToDouble(Integer::doubleValue).average().orElse(0);
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
 
-    public static List<Show> getUsersShows(User user) {
+    public static List<Show> getUsersShows(User user) throws BazaPodatakaException{
         List<Show> shows = getShows();
         List<Long> showIds = new ArrayList<>();
 
@@ -340,11 +341,11 @@ public class DataBase {
 
             return shows.stream().filter(show -> showIds.contains(show.getId())).collect(Collectors.toList());
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
 
-    public static List<Show> getShowSequence(Show show){
+    public static List<Show> getShowSequence(Show show) throws BazaPodatakaException{
         try(Connection connection = spajanjeNaBazu()) {
             List<Show> shows = new ArrayList<>();
             List<Long> ids = show.getIdSeqience();
@@ -417,7 +418,7 @@ public class DataBase {
 
             return shows;
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new BazaPodatakaException(e);
         }
     }
 }

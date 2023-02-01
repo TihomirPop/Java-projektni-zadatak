@@ -2,6 +2,7 @@ package hr.java.projekt.main;
 
 import hr.java.projekt.entitet.Show;
 import hr.java.projekt.entitet.User;
+import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.threads.TitleUpdateThread;
 import hr.java.projekt.util.EmailVerification;
 import javafx.animation.KeyFrame;
@@ -55,10 +56,11 @@ public class Main extends Application {
             mainStage.show();
         }catch (IOException e){
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
-    public static void pogresanUnosPodataka(List<String> podaci){
+    public static void pogresanUnosPodataka(List<String> podaci) throws KriviInputException {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Pogrešan unos podataka");
         alert.setHeaderText("Molimo ispravite sljedeće pogreške:");
@@ -73,39 +75,9 @@ public class Main extends Application {
             alert.setContentText(greska + " su obavezni podaci!");
 
         alert.showAndWait();
+        throw new KriviInputException(alert.getContentText());
     }
 
     public static void main(String[] args) {
-        /*try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("dat/shows/steinsGate"))){
-            List<Genre> genres = new ArrayList<>();
-            genres.add(Genre.DRAMA);
-            genres.add(Genre.SCI_FI);
-            genres.add(Genre.SUSPENSE);
-
-            List<Long> idSequence = new ArrayList<>();
-            idSequence.add(1l);
-
-            Show show = new Series(
-                    1l,
-                    "Steins;Gate",
-                    "Steins;Gate",
-                    "Eccentric scientist Rintarou Okabe has a never-ending thirst for scientific exploration. Together with his ditzy but well-meaning friend Mayuri Shiina and his roommate Itaru Hashida, Rintarou founds the Future Gadget Laboratory in the hopes of creating technological innovations that baffle the human psyche. Despite claims of grandeur, the only notable \"gadget\" the trio have created is a microwave that has the mystifying power to turn bananas into green goo.\n" +
-                            "\n" +
-                            "However, when Rintarou decides to attend neuroscientist Kurisu Makise's conference on time travel, he experiences a series of strange events that lead him to believe that there is more to the \"Phone Microwave\" gadget than meets the eye. Apparently able to send text messages into the past using the microwave, Rintarou dabbles further with the \"time machine,\" attracting the ire and attention of the mysterious organization SERN.\n" +
-                            "\n" +
-                            "Due to the novel discovery, Rintarou and his friends find themselves in an ever-present danger. As he works to mitigate the damage his invention has caused to the timeline, he is not only fighting a battle to save his loved ones, but also one against his degrading sanity.",
-                    "dat/img/Steins;Gate.jpg",
-                    "White Fox",
-                    genres,
-                    idSequence,
-                    new StartEndDate(LocalDate.parse("2011-04-06"), LocalDate.parse("2011-09-14")),
-                    24);
-            out.writeObject(show);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
         launch();}
 }

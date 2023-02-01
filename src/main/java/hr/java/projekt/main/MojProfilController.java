@@ -1,6 +1,7 @@
 package hr.java.projekt.main;
 
 import hr.java.projekt.entitet.User;
+import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
 import javafx.application.Platform;
@@ -48,90 +49,105 @@ public class MojProfilController {
 
     @FXML
     private void save(){
-        String username = usernameTextField.getText();
-        String email = emailTextField.getText();
-        String password = newPasswordTextField.getText();
-        String confirmPassword = confirmPasswordTextField.getText();
+        try {
+            String username = usernameTextField.getText();
+            String email = emailTextField.getText();
+            String password = newPasswordTextField.getText();
+            String confirmPassword = confirmPasswordTextField.getText();
 
-        List<User> sameUser = Datoteke.getUsers();
-        if(!username.isEmpty())
-            sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username)).toList();
-        if(!email.isEmpty())
-            sameUser = sameUser.stream().filter(user -> user.getEmail().equals(email)).toList();
+            List<User> sameUser = Datoteke.getUsers();
+            if (!username.isEmpty())
+                sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username)).toList();
+            if (!email.isEmpty())
+                sameUser = sameUser.stream().filter(user -> user.getEmail().equals(email)).toList();
 
-        if(!sameUser.isEmpty() && (!username.equals(Main.currentUser.getUsername()) || !email.equals(Main.currentUser.getEmail()))) {
-            logger.warn("To korisnicko ime ili email se vec koristi");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Pogrešan unos podataka");
-            alert.setHeaderText("Korisnicko ime ili email se vec koristi");
-            alert.showAndWait();
-            return;
-        }
-        if(password.length() < 6 && !password.isEmpty()) {
-            logger.warn("Duzina lozinke mora biti barem 6");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Pogrešan unos podataka");
-            alert.setHeaderText("Duzina lozinke mora biti barem 6");
-            alert.showAndWait();
-            return;
-        }
-        if (!password.equals(confirmPassword) && !password.isEmpty()) {
-            logger.warn("Lozinke se moraju podudarati");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Pogrešan unos podataka");
-            alert.setHeaderText("Lozinke se moraju podudarati");
-            alert.showAndWait();
-            return;
-        }
+            if (!sameUser.isEmpty() && (!username.equals(Main.currentUser.getUsername()) || !email.equals(Main.currentUser.getEmail()))) {
+                logger.warn("To korisnicko ime ili email se vec koristi");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pogrešan unos podataka");
+                alert.setHeaderText("Korisnicko ime ili email se vec koristi");
+                alert.showAndWait();
+                return;
+            }
+            if (password.length() < 6 && !password.isEmpty()) {
+                logger.warn("Duzina lozinke mora biti barem 6");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pogrešan unos podataka");
+                alert.setHeaderText("Duzina lozinke mora biti barem 6");
+                alert.showAndWait();
+                return;
+            }
+            if (!password.equals(confirmPassword) && !password.isEmpty()) {
+                logger.warn("Lozinke se moraju podudarati");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pogrešan unos podataka");
+                alert.setHeaderText("Lozinke se moraju podudarati");
+                alert.showAndWait();
+                return;
+            }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Spremanje");
-        alert.setHeaderText("Želite li spremiti podatke?");
-        ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
-        ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
-        alert.getButtonTypes().setAll(daButton, neButton);
-        alert.showAndWait().ifPresent(response -> {
-            if (response == daButton)
-                spremiEmailiPassword(username, email, password);
-        });
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Spremanje");
+            alert.setHeaderText("Želite li spremiti podatke?");
+            ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+            ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+            alert.getButtonTypes().setAll(daButton, neButton);
+            alert.showAndWait().ifPresent(response -> {
+                if (response == daButton)
+                    spremiEmailiPassword(username, email, password);
+            });
+        } catch (DatotekaException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
     }
 
     private void spremiEmailiPassword(String username, String email, String password) {
-        if(!password.isEmpty())
-            Main.currentUser.setPassword(password);
-        if(!email.equals(Main.currentUser.getEmail())) {
-            Main.currentUser.setVerified(false);
-            verifikacijaLabel.setText("OPREZ!\nEmail nije verificiran!");
-            verificirajButton.setDisable(false);
+        try {
+            if (!password.isEmpty())
+                Main.currentUser.setPassword(password);
+            if (!email.equals(Main.currentUser.getEmail())) {
+                Main.currentUser.setVerified(false);
+                verifikacijaLabel.setText("OPREZ!\nEmail nije verificiran!");
+                verificirajButton.setDisable(false);
+            }
+            Main.currentUser.setEmail(email);
+            Main.currentUser.setUsername(username);
+            Datoteke.editUser(Main.currentUser);
+        } catch (DatotekaException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         }
-        Main.currentUser.setEmail(email);
-        Main.currentUser.setUsername(username);
-        Datoteke.editUser(Main.currentUser);
     }
 
     @FXML
     private void verify(){
-        String kod = generirajKod();
-        new Thread(new SendVerificationEmailThread(Main.currentUser.getEmail(), kod)).start();
-        TextInputDialog td = new TextInputDialog("******");
-        td.setTitle("Verifikacija");
-        td.setHeaderText("Verifikacijski kod je poslan na vašu email adresu");
-        Optional<String> uneseniKod = td.showAndWait();
-        if(uneseniKod.isEmpty())
-            return;
-        while(uneseniKod.isEmpty() || !uneseniKod.get().toUpperCase().equals(kod)){
-            if(uneseniKod.isEmpty())
+        try {
+            String kod = generirajKod();
+            new Thread(new SendVerificationEmailThread(Main.currentUser.getEmail(), kod)).start();
+            TextInputDialog td = new TextInputDialog("******");
+            td.setTitle("Verifikacija");
+            td.setHeaderText("Verifikacijski kod je poslan na vašu email adresu");
+            Optional<String> uneseniKod = td.showAndWait();
+            if (uneseniKod.isEmpty())
                 return;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Krivi kod");
-            alert.setHeaderText("Krivi kod!\nPonovite unos.");
-            alert.showAndWait();
-            uneseniKod = td.showAndWait();
+            while (uneseniKod.isEmpty() || !uneseniKod.get().toUpperCase().equals(kod)) {
+                if (uneseniKod.isEmpty())
+                    return;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Krivi kod");
+                alert.setHeaderText("Krivi kod!\nPonovite unos.");
+                alert.showAndWait();
+                uneseniKod = td.showAndWait();
+            }
+            Main.currentUser.setVerified(true);
+            Datoteke.editUser(Main.currentUser);
+            verifikacijaLabel.setText("Email je verificiran!");
+            verificirajButton.setDisable(true);
+        } catch (DatotekaException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         }
-        Main.currentUser.setVerified(true);
-        Datoteke.editUser(Main.currentUser);
-        verifikacijaLabel.setText("Email je verificiran!");
-        verificirajButton.setDisable(true);
     }
 
     private String generirajKod(){

@@ -1,5 +1,7 @@
 package hr.java.projekt.util;
 
+import hr.java.projekt.exceptions.EmailException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -13,7 +15,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 public class EmailVerification {
     private static final String EMAIL_VERIFICATION_FILE = "emailVerification.properties";
-    public static synchronized void sendMail(String email, String kod){
+    public static synchronized void sendMail(String email, String kod) throws EmailException{
         try {
             Properties properties = System.getProperties();
             Properties emailProperties = new Properties();
@@ -42,10 +44,8 @@ public class EmailVerification {
                             "<h1 style=\"text-align: center;\">" + kod + "</h1>",
                     "text/html");
             Transport.send(message);
-        } catch (MessagingException mex) {
-            mex.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (MessagingException | IOException e) {
+            throw new EmailException(e);
         }
     }
 }

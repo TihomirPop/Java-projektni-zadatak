@@ -2,6 +2,8 @@ package hr.java.projekt.main;
 
 import hr.java.projekt.db.DataBase;
 import hr.java.projekt.entitet.*;
+import hr.java.projekt.exceptions.BazaPodatakaException;
+import hr.java.projekt.exceptions.DatotekaException;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -22,6 +24,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -30,6 +34,7 @@ import java.sql.Time;
 import java.util.*;
 
 public class MainListController {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     @FXML
     private TableView<ImageShow<Show>> showTableView;
     @FXML
@@ -65,71 +70,74 @@ public class MainListController {
     private Map<Show, Double> prosjekMap = new HashMap<>();
 
     public void initialize() {
-        //new Thread(new LoadShowsThread(showList, prosjekMap, showTableView)).start();
-        Platform.runLater(() -> takeFocus.requestFocus());
-        showList = DataBase.getShows();
-        for(Show show: showList)
-            prosjekMap.put(show, show.getProsjek());
+        try {
+            Platform.runLater(() -> takeFocus.requestFocus());
+            showList = DataBase.getShows();
+            for (Show show : showList)
+                prosjekMap.put(show, show.getProsjek());
 
-        imgTableColumn.setCellValueFactory(new PropertyValueFactory<>("imageView"));
-        naslovTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getShow().getPrevedeniNaslov()));
-        zanroviTableColumn.setCellValueFactory(data -> {
-            List<Genre> genres = data.getValue().getShow().getGenres().stream().toList();
-            String string = genres.get(0).toString().substring(0,1) + genres.get(0).toString().substring(1).toLowerCase();
-            for(int i = 1; i < genres.size(); i++)
-                string += ", " + genres.get(i).toString().substring(0,1) + genres.get(i).toString().substring(1).toLowerCase();
-            string = string.replaceAll("_", " ");
-            return new SimpleStringProperty(string);
-        });
-        tipTableColumn.setCellValueFactory(data ->{
-            String string = "N/A";
-            if(data.getValue().getShow() instanceof Series series)
-                string = "Serija - " + series.getNumberOfEpisodes().toString() + " ep";
-            else if(data.getValue().getShow() instanceof Movie)
-                string = "Film";
-            return new SimpleStringProperty(string);
-        });
-        prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()))));
-        showTableView.setRowFactory(tableView -> {
-            final TableRow<ImageShow<Show>> row = new TableRow<>();
+            imgTableColumn.setCellValueFactory(new PropertyValueFactory<>("imageView"));
+            naslovTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getShow().getPrevedeniNaslov()));
+            zanroviTableColumn.setCellValueFactory(data -> {
+                List<Genre> genres = data.getValue().getShow().getGenres().stream().toList();
+                String string = genres.get(0).toString().substring(0, 1) + genres.get(0).toString().substring(1).toLowerCase();
+                for (int i = 1; i < genres.size(); i++)
+                    string += ", " + genres.get(i).toString().substring(0, 1) + genres.get(i).toString().substring(1).toLowerCase();
+                string = string.replaceAll("_", " ");
+                return new SimpleStringProperty(string);
+            });
+            tipTableColumn.setCellValueFactory(data -> {
+                String string = "N/A";
+                if (data.getValue().getShow() instanceof Series series)
+                    string = "Serija - " + series.getNumberOfEpisodes().toString() + " ep";
+                else if (data.getValue().getShow() instanceof Movie)
+                    string = "Film";
+                return new SimpleStringProperty(string);
+            });
+            prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()))));
+            showTableView.setRowFactory(tableView -> {
+                final TableRow<ImageShow<Show>> row = new TableRow<>();
 
-            row.hoverProperty().addListener((observable) -> {
-                final ImageShow<Show> imageShow = row.getItem();
-                if(imageShow == null)
-                    return;
-                row.setStyle("-fx-cursor: hand;");
-                Timeline timeline = new Timeline();
-                if(row.isHover()) {
-                    KeyValue keyValue = new KeyValue(imageShow.getImageView().fitHeightProperty(), 128, Interpolator.LINEAR);
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(50), keyValue));
-                    timeline.play();
-                }
-                else{
-                    KeyValue keyValue = new KeyValue(imageShow.getImageView().fitHeightProperty(), 64, Interpolator.LINEAR);
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(50), keyValue));
-                    timeline.play();
+                row.hoverProperty().addListener((observable) -> {
+                    final ImageShow<Show> imageShow = row.getItem();
+                    if (imageShow == null)
+                        return;
+                    row.setStyle("-fx-cursor: hand;");
+                    Timeline timeline = new Timeline();
+                    if (row.isHover()) {
+                        KeyValue keyValue = new KeyValue(imageShow.getImageView().fitHeightProperty(), 128, Interpolator.LINEAR);
+                        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(50), keyValue));
+                        timeline.play();
+                    } else {
+                        KeyValue keyValue = new KeyValue(imageShow.getImageView().fitHeightProperty(), 64, Interpolator.LINEAR);
+                        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(50), keyValue));
+                        timeline.play();
+                    }
+                });
+                return row;
+            });
+            showTableView.setItems(FXCollections.observableList((ImageShows.toImageShowList(showList))));
+
+            serijaRadioButton.setToggleGroup(tipToggleGroup);
+            filmRadioButton.setToggleGroup(tipToggleGroup);
+            veceRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
+            manjeRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
+
+            zanroviListView.setItems(FXCollections.observableArrayList(List.of(Genre.values())));
+            zanroviListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+            ocjeneComboBox.setItems(FXCollections.observableList(Arrays.stream(Score.values()).toList()));
+
+            showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ImageShow<Show>> observable, ImageShow<Show> oldValue, ImageShow<Show> newValue) -> {
+                if (newValue != null) {
+                    Main.currentShow = newValue.getShow();
+                    Main.prikaziScene(new FXMLLoader(Main.class.getResource("showView.fxml")));
                 }
             });
-            return row;
-        });
-        showTableView.setItems(FXCollections.observableList((ImageShows.toImageShowList(showList))));
-
-        serijaRadioButton.setToggleGroup(tipToggleGroup);
-        filmRadioButton.setToggleGroup(tipToggleGroup);
-        veceRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
-        manjeRadioButton.setToggleGroup(ocjeneFilterToggleGroup);
-
-        zanroviListView.setItems(FXCollections.observableArrayList(List.of(Genre.values())));
-        zanroviListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        ocjeneComboBox.setItems(FXCollections.observableList(Arrays.stream(Score.values()).toList()));
-
-        showTableView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends ImageShow<Show>> observable, ImageShow<Show> oldValue, ImageShow<Show> newValue) -> {
-            if(newValue != null) {
-                Main.currentShow = newValue.getShow();
-                Main.prikaziScene(new FXMLLoader(Main.class.getResource("showView.fxml")));
-            }
-        });
+        } catch (BazaPodatakaException e){
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
     }
 
     @FXML
