@@ -2,14 +2,19 @@ package hr.java.projekt.main;
 
 import hr.java.projekt.entitet.Show;
 import hr.java.projekt.entitet.User;
+import hr.java.projekt.threads.TitleUpdateThread;
 import hr.java.projekt.util.EmailVerification;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +33,19 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), screenSize.getWidth(), screenSize.getHeight());
         scene.getStylesheets().add("style.css");
-        stage.setTitle("MML");
+        stage.setTitle("MSL");
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
-    }
 
+        Timeline updateTitle = new Timeline(
+                new KeyFrame(Duration.seconds(3), event -> Platform.runLater(new TitleUpdateThread())));
+        updateTitle.setCycleCount(Timeline.INDEFINITE);
+        updateTitle.play();
+    }
+    public static void setMainStageTitle(String title){
+        mainStage.setTitle(title);
+    }
     public static void prikaziScene(FXMLLoader fxmlLoader){
         try {
             Scene scene = new Scene(fxmlLoader.load(), screenSize.getWidth(), screenSize.getHeight());

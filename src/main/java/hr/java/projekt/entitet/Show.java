@@ -1,18 +1,15 @@
 package hr.java.projekt.entitet;
 
 import hr.java.projekt.db.DataBase;
-import javafx.scene.control.TableView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Show extends Entitet implements Serializable {
+public abstract class Show extends Entitet implements Shows {
     private String orginalniNaslov;
     private String prevedeniNaslov;
     private String opis;
@@ -102,8 +99,22 @@ public abstract class Show extends Entitet implements Serializable {
     public String toString() {
         return orginalniNaslov;
     }
-
+    @Override
     public Double getProsjek(){
         return DataBase.getShowProsjek(this);
+    }
+    public static Show odrediNajboljiShow(List<Show> shows) {
+        Double maxProsjek = 0.;
+        Show maxShow = null;
+        ListPair<Show, Double> showProsjekPair = new ListPair<>(new ArrayList<>(), new ArrayList<>());
+        for(Show show: shows)
+            showProsjekPair.add(show, show.getProsjek());
+
+        for(int i = 0; i < showProsjekPair.getFirstList().size(); i++)
+            if(showProsjekPair.fromSecondGet(i) > maxProsjek){
+                maxProsjek = showProsjekPair.fromSecondGet(i);
+                maxShow = showProsjekPair.fromFirstGet(i);
+            }
+        return maxShow;
     }
 }
