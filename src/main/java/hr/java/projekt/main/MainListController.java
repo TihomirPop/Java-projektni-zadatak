@@ -94,7 +94,7 @@ public class MainListController {
                     string = "Film";
                 return new SimpleStringProperty(string);
             });
-            prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()))));
+            prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()) < 10 ? prosjekMap.get(data.getValue().getShow()) : 9.99)));
             showTableView.setRowFactory(tableView -> {
                 final TableRow<ImageShow<Show>> row = new TableRow<>();
 
