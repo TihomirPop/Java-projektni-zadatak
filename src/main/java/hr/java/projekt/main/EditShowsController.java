@@ -80,6 +80,8 @@ public class EditShowsController {
         showComboBox.getSelectionModel().selectFirst();
         showNastavciComboBox.setItems(FXCollections.observableArrayList(shows));
         nastavciListView.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getId().equals(-1l)).toList()));
+        traziTextField.clear();
+        traziNastavkeTextField.clear();
     }
     @FXML
     private void edit(){
@@ -94,10 +96,9 @@ public class EditShowsController {
             showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> !show.getIdSeqience().contains(s.getId())).toList()));
             nastavciListView.setItems(FXCollections.observableArrayList(show.getIdSeqience().stream().map(id -> shows.stream().filter(s -> s.getId().equals(id)).toList().get(0)).collect(Collectors.toList())));
             opisTextArea.setText(show.getOpis());
-            int prviZanar = show.getGenres().stream().toList().get(0).ordinal();
-            int ostaliZanrovi[] = show.getGenres().stream().skip(1).mapToInt(Enum::ordinal).toArray();
             zanroviListView.getSelectionModel().clearSelection();
-            zanroviListView.getSelectionModel().selectIndices(prviZanar, ostaliZanrovi);
+            for(Genre genre: show.getGenres())
+                zanroviListView.getSelectionModel().select(genre);
             if(show instanceof Series series){
                 tipComboBox.getSelectionModel().selectFirst();
                 pocetakDatePicker.setValue(series.getStartEndDate().startDate());
@@ -218,14 +219,24 @@ public class EditShowsController {
     }
     @FXML
     private void delete(){
-        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1l)) {
-            DataBase.deleteShow(showComboBox.getValue());
-            refresh();
+        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1l)){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Brisanje");
+            alert.setHeaderText("Želite li obrisati show?");
+            ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+            ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+            alert.getButtonTypes().setAll(daButton, neButton);
+            alert.showAndWait().ifPresent(response -> {
+                if(response == daButton) {
+                    DataBase.deleteShow(showComboBox.getValue());
+                    refresh();
+                }
+            });
         }
     }
     @FXML
-    private void save(){
-        if(!showComboBox.getSelectionModel().isEmpty()) {
+    private void save() {
+        if (!showComboBox.getSelectionModel().isEmpty()) {
             String orginalniNaziv = orginalniNazivTextField.getText();
             String prevedeniNaziv = prevedeniNazivTextField.getText();
             String slika = lokacijaSlikeLabel.getText();
@@ -239,97 +250,113 @@ public class EditShowsController {
             String brojEpizoda = brojEpizodaTextField.getText();
             List<String> greske = new ArrayList<>();
 
-            if(orginalniNaziv.isEmpty())
+            if (orginalniNaziv.isEmpty())
                 greske.add("orginalni naziv");
-            if(prevedeniNaziv.isEmpty())
+            if (prevedeniNaziv.isEmpty())
                 greske.add("prevedeni naziv");
-            if(slika.isEmpty())
+            if (slika.isEmpty())
                 greske.add("slika");
-            if(studio.isEmpty())
+            if (studio.isEmpty())
                 greske.add("studio");
-            if(sequels.isEmpty())
+            if (sequels.isEmpty())
                 greske.add("nastavci");
-            if(opis.isEmpty())
+            if (opis.isEmpty())
                 greske.add("opis");
-            if(genres.isEmpty())
+            if (genres.isEmpty())
                 greske.add("žanrovi");
-            if(pocetak == null)
+            if (pocetak == null)
                 greske.add("pocetak");
 
-            if(tip.equals("Serija")){
-                if(kraj == null)
+            if (tip.equals("Serija")) {
+                if (kraj == null)
                     greske.add("kraj");
-                if(brojEpizoda.isEmpty() || !brojEpizoda.matches("[0-9]+"))
+                if (brojEpizoda.isEmpty() || !brojEpizoda.matches("[0-9]+"))
                     greske.add("broj epizoda");
 
-                if(greske.isEmpty()){
-                    if(showComboBox.getValue().getId().equals(-1l)) {
-                        DataBase.addShow(new Series(
-                                -1l,
-                                orginalniNaziv,
-                                prevedeniNaziv,
-                                opis,
-                                slika,
-                                studio,
-                                genres,
-                                sequels,
-                                new StartEndDate(
-                                        pocetak,
-                                        kraj),
-                                Integer.parseInt(brojEpizoda)
-                        ));
-                    }
-                    else DataBase.updateShow(new Series(
-                            showComboBox.getValue().getId(),
-                            orginalniNaziv,
-                            prevedeniNaziv,
-                            opis,
-                            slika,
-                            studio,
-                            genres,
-                            sequels,
-                            new StartEndDate(
-                                    pocetak,
-                                    kraj),
-                            Integer.parseInt(brojEpizoda)
-                    ));
-                }
-                else
-                    Main.pogresanUnosPodataka(greske);
-            }
-            else {
                 if (greske.isEmpty()) {
-                    if(showComboBox.getValue().getId().equals(-1l)) {
-                        DataBase.addShow(new Movie(
-                                -1l,
-                                orginalniNaziv,
-                                prevedeniNaziv,
-                                opis,
-                                slika,
-                                studio,
-                                genres,
-                                sequels,
-                                pocetak
-                        ));
-                    }
-                    else {
-                        DataBase.updateShow(new Movie(
-                                showComboBox.getValue().getId(),
-                                orginalniNaziv,
-                                prevedeniNaziv,
-                                opis,
-                                slika,
-                                studio,
-                                genres,
-                                sequels,
-                                pocetak
-                        ));
-                    }
-                }
-                else
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == daButton) {
+                            if (showComboBox.getValue().getId().equals(-1l)) {
+                                DataBase.addShow(new Series(
+                                        -1l,
+                                        orginalniNaziv,
+                                        prevedeniNaziv,
+                                        opis,
+                                        slika,
+                                        studio,
+                                        genres,
+                                        sequels,
+                                        new StartEndDate(
+                                                pocetak,
+                                                kraj),
+                                        Integer.parseInt(brojEpizoda)
+                                ));
+                            } else DataBase.updateShow(new Series(
+                                    showComboBox.getValue().getId(),
+                                    orginalniNaziv,
+                                    prevedeniNaziv,
+                                    opis,
+                                    slika,
+                                    studio,
+                                    genres,
+                                    sequels,
+                                    new StartEndDate(
+                                            pocetak,
+                                            kraj),
+                                    Integer.parseInt(brojEpizoda)
+                            ));
+                            refresh();
+                        }
+                    });
+                } else
+                    Main.pogresanUnosPodataka(greske);
+            } else {
+                if (greske.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == daButton) {
+                            if (showComboBox.getValue().getId().equals(-1l)) {
+                                DataBase.addShow(new Movie(
+                                        -1l,
+                                        orginalniNaziv,
+                                        prevedeniNaziv,
+                                        opis,
+                                        slika,
+                                        studio,
+                                        genres,
+                                        sequels,
+                                        pocetak
+                                ));
+                            } else {
+                                DataBase.updateShow(new Movie(
+                                        showComboBox.getValue().getId(),
+                                        orginalniNaziv,
+                                        prevedeniNaziv,
+                                        opis,
+                                        slika,
+                                        studio,
+                                        genres,
+                                        sequels,
+                                        pocetak
+                                ));
+                            }
+                            refresh();
+                        }
+                    });
+                } else
                     Main.pogresanUnosPodataka(greske);
             }
         }
-        refresh();
     }
 }
