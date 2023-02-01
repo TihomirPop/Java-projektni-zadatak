@@ -90,6 +90,7 @@ public class MyListController {
                 final ImageShow<Show> imageShow = row.getItem();
                 if(imageShow == null)
                     return;
+                row.setStyle("-fx-cursor: hand;");
                 Timeline timeline = new Timeline();
                 if(row.isHover()) {
                     KeyValue keyValue = new KeyValue(imageShow.getImageView().fitHeightProperty(), 128, Interpolator.LINEAR);

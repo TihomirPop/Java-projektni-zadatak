@@ -79,7 +79,7 @@ public class DataBase {
                             slike.get(i),
                             studiji.get(i),
                             new HashSet<>(),
-                            new ArrayList<>(),
+                            null,
                             rs.getDate("RELEASE_DATE").toLocalDate()
                     ));
                 }
@@ -344,86 +344,80 @@ public class DataBase {
         }
     }
 
-    /*public static List<UserShow> getUserShows(User user) {
-        try (Connection connection = spajanjeNaBazu()) {
-            List<UserShow> userShowList = new ArrayList<>();
-            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM USER_SHOWS WHERE USER_ID = " + user.getId().toString());
-            while (rs.next()){
-                UserShowBuilder userShowBuilder = new UserShowBuilder(user);
-                userShowBuilder.saShow(getShow(rs.getLong("SHOW_ID"), connection));
-                userShowBuilder.saId(rs.getLong("ID"));
-                userShowBuilder.saScore(Score.getScoreFromInt(rs.getInt("SCORE")));
-                userShowBuilder.saWatched(rs.getInt("WATCHED"));
-                userShowList.add(userShowBuilder.build());
+    public static List<Show> getShowSequence(Show show){
+        try(Connection connection = spajanjeNaBazu()) {
+            List<Show> shows = new ArrayList<>();
+            List<Long> ids = show.getIdSeqience();
+            List<String> orginalniNaslovi = new ArrayList<>();
+            List<String> prevedeniNaslovi = new ArrayList<>();
+            List<String> opisi = new ArrayList<>();
+            List<String> slike = new ArrayList<>();
+            List<String> studiji = new ArrayList<>();
+            ResultSet rs;
+
+            PreparedStatement showsPS = connection.prepareStatement("SELECT * FROM SHOWS WHERE ID = ?");
+            PreparedStatement seriesPS = connection.prepareStatement("SELECT * FROM SERIES WHERE ID = ?");
+            PreparedStatement moviePS = connection.prepareStatement("SELECT * FROM MOVIES WHERE ID = ?");
+            for(int i = 0; i < ids.size(); i++){
+                showsPS.setLong(1, ids.get(i));
+                rs = showsPS.executeQuery();
+                rs.next();
+                orginalniNaslovi.add(rs.getString("ORGINALNI_NASLOV"));
+                prevedeniNaslovi.add(rs.getString("PREVEDENI_NASLOV"));
+                opisi.add(rs.getString("OPIS"));
+                slike.add(rs.getString("SLIKA"));
+                studiji.add(rs.getString("STUDIO"));
+
+                seriesPS.setLong(1, ids.get(i));
+                rs = seriesPS.executeQuery();
+                if (rs.next()) {
+                    shows.add(new Series(
+                            ids.get(i),
+                            orginalniNaslovi.get(i),
+                            prevedeniNaslovi.get(i),
+                            opisi.get(i),
+                            slike.get(i),
+                            studiji.get(i),
+                            new HashSet<>(),
+                            null,
+                            new StartEndDate(
+                                    rs.getDate("START_DATE").toLocalDate(),
+                                    rs.getDate("END_DATE").toLocalDate()),
+                            rs.getInt("NUMBER_OF_EPISODES")
+                    ));
+                    continue;
+                }
+
+                moviePS.setLong(1, ids.get(i));
+                rs = moviePS.executeQuery();
+                if (rs.next()) {
+                    shows.add(new Movie(
+                            ids.get(i),
+                            orginalniNaslovi.get(i),
+                            prevedeniNaslovi.get(i),
+                            opisi.get(i),
+                            slike.get(i),
+                            studiji.get(i),
+                            new HashSet<>(),
+                            null,
+                            rs.getDate("RELEASE_DATE").toLocalDate()
+                    ));
+                }
             }
-            return userShowList;
+
+
+            for(Show s: shows){
+                PreparedStatement genresPS = connection.prepareStatement("SELECT * FROM SHOWS_GENRES WHERE ID = ?");
+                genresPS.setLong(1, s.getId());
+                rs = genresPS.executeQuery();
+                while (rs.next())
+                    s.getGenres().add(Genre.valueOf(rs.getString("GENRE")));
+                s.setIdSeqience(show.getIdSeqience());
+            }
+
+            return shows;
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-    private static Show getShow(Long showId, Connection connection) throws SQLException {
-        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM SHOWS WHERE ID = " + showId.toString());
-        rs.next();
-        String orginalniNaslov = rs.getString("ORGINALNI_NASLOV");
-        String prevedeniNaslov = rs.getString("PREVEDENI_NASLOV");
-        String opis = rs.getString("OPIS");
-        String slika = rs.getString("SLIKA");
-        String studio = rs.getString("STUDIO");
-
-        Set<Genre> genres = new HashSet<>();
-        rs = connection.createStatement().executeQuery("SELECT * FROM SHOWS_GENRES WHERE ID = " + showId.toString());
-        while (rs.next())
-            genres.add(Genre.valueOf(rs.getString("GENRE")));
-
-        Map<Long, Long> sequelMap = new HashMap<>();
-        rs = connection.createStatement().executeQuery("SELECT * FROM SEQUELS");
-        while (rs.next())
-            sequelMap.put(rs.getLong("SHOW_ID"), rs.getLong("SEQUEL_ID"));
-
-        Long pocetak = showId;
-        ArrayList<Long> idSequence = new ArrayList<>();
-        while(sequelMap.containsValue(pocetak)) {
-            Long finalPocetak = pocetak;
-            pocetak = sequelMap.keySet().stream().filter(key -> sequelMap.get(key).equals(finalPocetak)).toList().get(0);
-        }
-        idSequence.add(pocetak);
-        while(sequelMap.containsKey(pocetak)){
-            pocetak = sequelMap.get(pocetak);
-            idSequence.add(pocetak);
-        }
-        if(idSequence.isEmpty())
-            idSequence.add(showId);
-
-        rs = connection.createStatement().executeQuery("SELECT * FROM SERIES WHERE ID = " + showId.toString());
-        if(rs.next()){
-            return new Series(
-                    showId,
-                    orginalniNaslov,
-                    prevedeniNaslov,
-                    opis,
-                    slika,
-                    studio,
-                    genres,
-                    idSequence,
-                    new StartEndDate(
-                            rs.getDate("START_DATE ").toLocalDate(),
-                            rs.getDate("END_DATE").toLocalDate()
-                    ),
-                    rs.getInt("NUMBER_OF_EPISODES")
-            );
-        }
-        rs = connection.createStatement().executeQuery("SELECT * FROM MOVIES WHERE ID = " + showId.toString());
-        return new Movie(
-                showId,
-                orginalniNaslov,
-                prevedeniNaslov,
-                opis,
-                slika,
-                studio,
-                genres,
-                idSequence,
-                rs.getDate("RELEASE_DATE").toLocalDate()
-        );
-    }*/
 }

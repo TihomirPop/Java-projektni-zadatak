@@ -26,9 +26,9 @@ public abstract class Show extends Entitet implements Serializable {
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
         this.opis = opis;
-        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov + slika.substring(slika.length() - 4))) {
+        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4))) {
             try {
-                this.slika = "dat/img/" + orginalniNaslov + slika.substring(slika.length() - 4);
+                this.slika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
                 Files.deleteIfExists(Path.of(this.slika));
                 Files.copy(Path.of(slika), Path.of(this.slika));
             } catch (IOException e) {

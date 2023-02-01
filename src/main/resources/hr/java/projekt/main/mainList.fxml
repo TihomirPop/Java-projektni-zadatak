@@ -33,6 +33,9 @@
           <TableColumn fx:id="tipTableColumn" maxWidth="117.0" prefWidth="117.0" text="Tip" />
             <TableColumn fx:id="prosjekTableColumn" maxWidth="90.0" prefWidth="90.0" text="Prosjek" />
         </columns>
+         <GridPane.margin>
+            <Insets bottom="10.0" />
+         </GridPane.margin>
       </TableView>
       <GridPane fx:id="takeFocus" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <columnConstraints>

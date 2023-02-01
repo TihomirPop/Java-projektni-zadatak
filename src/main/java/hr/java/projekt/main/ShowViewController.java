@@ -5,6 +5,7 @@ import hr.java.projekt.entitet.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,9 +48,18 @@ public class ShowViewController {
     private Button obrisi;
     @FXML
     private Label prosjek;
+    @FXML
+    private Label nastavakLabel;
+    @FXML
+    private Label nastavak;
+    @FXML
+    private Label prethodnikLabel;
+    @FXML
+    private Label prethodnik;
 
     private Show show;
     private UserShow userShow;
+    private Show prethodnikShow, nastavakShow;
     @FXML
     private void initialize(){
         Platform.runLater( () -> focus());
@@ -102,6 +112,31 @@ public class ShowViewController {
                 epizodeTextField.setText(userShow.getWatched().toString());
             }
         }
+
+        List<Show> shows = DataBase.getShowSequence(show);
+        for(int i = 0; i < show.getIdSeqience().size(); i++)
+            if(shows.get(i).getId().equals(show.getId())){
+                if((i - 1) >= 0){
+                    prethodnik.setText(shows.get(i - 1).getPrevedeniNaslov());
+                    prethodnikShow = shows.get(i - 1);
+                }
+                else {
+                    prethodnik.setVisible(false);
+                    prethodnik.setManaged(false);
+                    prethodnikLabel.setVisible(false);
+                    prethodnikLabel.setManaged(false);
+                }
+                if((i + 1) < show.getIdSeqience().size()){
+                    nastavak.setText(shows.get(i + 1).getPrevedeniNaslov());
+                    nastavakShow = shows.get(i + 1);
+                }
+                else {
+                    nastavak.setVisible(false);
+                    nastavak.setManaged(false);
+                    nastavakLabel.setVisible(false);
+                    nastavakLabel.setManaged(false);
+                }
+            }
     }
 
     @FXML
@@ -166,5 +201,16 @@ public class ShowViewController {
     @FXML
     private void focus(){
         imageView.requestFocus();
+    }
+
+    @FXML
+    private void goToPrethodnik(){
+        Main.currentShow = prethodnikShow;
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("showView.fxml")));
+    }
+    @FXML
+    private void goToNastavak(){
+        Main.currentShow = nastavakShow;
+        Main.prikaziScene(new FXMLLoader(Main.class.getResource("showView.fxml")));
     }
 }
