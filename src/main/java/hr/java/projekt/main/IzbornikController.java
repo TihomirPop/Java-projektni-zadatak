@@ -20,6 +20,8 @@ public class IzbornikController {
     Button editUsersButton;
     @FXML
     Button backToLoginButton;
+    @FXML
+    Button promjeneButton;
 
     @FXML
     public void initialize() {
@@ -30,29 +32,33 @@ public class IzbornikController {
             hBox.getChildren().remove(mojProfilButton);
             hBox.getChildren().remove(editShowsButton);
             hBox.getChildren().remove(editUsersButton);
+            hBox.getChildren().remove(promjeneButton);
             showsButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.5));
             backToLoginButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.5));
         } else if (Main.currentUser.getRole().equals(1)) {
             hBox.getChildren().remove(editShowsButton);
             hBox.getChildren().remove(editUsersButton);
+            hBox.getChildren().remove(promjeneButton);
             showsButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.25));
             backToLoginButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.25));
             mojaListaButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.25));
             mojProfilButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.25));
         } else if (Main.currentUser.getRole().equals(2)) {
             hBox.getChildren().remove(editUsersButton);
-            showsButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.2));
-            backToLoginButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.2));
-            mojaListaButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.2));
-            mojProfilButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.2));
-            editShowsButton.prefWidthProperty().bind(hBox.widthProperty().multiply(0.2));
-        } else if (Main.currentUser.getRole().equals(3)) {
             showsButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
             backToLoginButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
             mojaListaButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
             mojProfilButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
             editShowsButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
-            editUsersButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
+            promjeneButton.prefWidthProperty().bind(hBox.widthProperty().divide(6));
+        } else if (Main.currentUser.getRole().equals(3)) {
+            showsButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            backToLoginButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            mojaListaButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            mojProfilButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            editShowsButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            editUsersButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
+            promjeneButton.prefWidthProperty().bind(hBox.widthProperty().divide(7));
         }
     }
 
@@ -72,6 +78,8 @@ public class IzbornikController {
     private void editShows(){
         Main.prikaziScene(new FXMLLoader(Main.class.getResource("editShows.fxml")));
     }
+    @FXML
+    private void editUsers() { Main.prikaziScene(new FXMLLoader(Main.class.getResource("editUsers.fxml"))); }
     @FXML
     private void backToLogin(){
         Main.currentUser = null;

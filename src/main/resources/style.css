@@ -1,6 +1,8 @@
 
 /* Redefine base colors */
 .root {
+    -fx-focus-color: transparent ;
+    -fx-faint-focus-color: transparent ;
     -fx-base: rgb(50, 50, 50);
     -fx-background: rgb(50, 50, 50);
 

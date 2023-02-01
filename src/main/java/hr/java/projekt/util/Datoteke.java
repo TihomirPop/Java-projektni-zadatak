@@ -86,4 +86,38 @@ public class Datoteke {
         }
 
     }
+
+    public static void deleteUser(User user) throws DatotekaException{
+        List<String> usersLines = null;
+        try {
+            usersLines = Files.lines(Path.of(USERS_PATH)).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new DatotekaException(e);
+        }
+
+        try(BufferedWriter out = new BufferedWriter(new FileWriter(USERS_PATH, false))){
+            for(int i = 0; i < usersLines.size(); i += SIZE_OF_USERS){
+                if(Long.parseLong(usersLines.get(i)) == user.getId())
+                    continue;
+                if(i == 0){
+                    out.write(usersLines.get(i) + '\n');
+                    out.write(usersLines.get(i + 1) + '\n');
+                    out.write(usersLines.get(i + 2) + '\n');
+                    out.write(usersLines.get(i + 3) + '\n');
+                    out.write(usersLines.get(i + 4) + '\n');
+                    out.write(usersLines.get(i + 5));
+                    continue;
+                }
+                out.write('\n' + usersLines.get(i));
+                out.write('\n' + usersLines.get(i + 1));
+                out.write('\n' + usersLines.get(i + 2));
+                out.write('\n' + usersLines.get(i + 3));
+                out.write('\n' + usersLines.get(i + 4));
+                out.write('\n' + usersLines.get(i + 5));
+            }
+
+        }catch (IOException e){
+            throw new DatotekaException(e);
+        }
+    }
 }

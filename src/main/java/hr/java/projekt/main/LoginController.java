@@ -51,7 +51,7 @@ public class LoginController {
                     alert.setTitle("Pogrešan unos podataka");
                     alert.setHeaderText("Korisnicko ime ili lozinka se ne podudaraju");
                     alert.showAndWait();
-                    throw new KriviInputException(e);
+                    logger.error(e.getMessage(), e);
                 }
             } else
                 Main.pogresanUnosPodataka(greske);

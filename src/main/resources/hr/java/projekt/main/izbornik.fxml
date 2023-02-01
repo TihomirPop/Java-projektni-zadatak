@@ -5,11 +5,12 @@
 
 <HBox fx:id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.java.projekt.main.IzbornikController">
    <children>
-      <Button fx:id="showsButton" minHeight="40.0" mnemonicParsing="false" onAction="#shows" text="Shows" />
+      <Button fx:id="showsButton" minHeight="40.0" mnemonicParsing="false" onAction="#shows" text="Glavna lista" />
       <Button fx:id="mojaListaButton" minHeight="40.0" mnemonicParsing="false" onAction="#myShows" text="Moja lista" />
-      <Button fx:id="mojProfilButton" minHeight="40.0" mnemonicParsing="false" onAction="#mojProfil" text="Moj profil" />
       <Button fx:id="editShowsButton" minHeight="40.0" mnemonicParsing="false" onAction="#editShows" text="Edit shows" />
-      <Button fx:id="editUsersButton" minHeight="40.0" mnemonicParsing="false" text="Edit users" />
-      <Button fx:id="backToLoginButton" minHeight="40.0" mnemonicParsing="false" onAction="#backToLogin" text="Back to login" />
+      <Button fx:id="editUsersButton" minHeight="40.0" mnemonicParsing="false" onAction="#editUsers" text="Edit users" />
+      <Button fx:id="promjeneButton" minHeight="40.0" mnemonicParsing="false" text="Promjene" />
+      <Button fx:id="mojProfilButton" minHeight="40.0" mnemonicParsing="false" onAction="#mojProfil" text="Moj profil" />
+      <Button fx:id="backToLoginButton" minHeight="40.0" mnemonicParsing="false" onAction="#backToLogin" text="Povratak na prijavu" />
    </children>
 </HBox>
