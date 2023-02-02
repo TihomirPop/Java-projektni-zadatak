@@ -9,7 +9,7 @@
       <Button fx:id="mojaListaButton" minHeight="40.0" mnemonicParsing="false" onAction="#myShows" text="Moja lista" />
       <Button fx:id="editShowsButton" minHeight="40.0" mnemonicParsing="false" onAction="#editShows" text="Edit shows" />
       <Button fx:id="editUsersButton" minHeight="40.0" mnemonicParsing="false" onAction="#editUsers" text="Edit users" />
-      <Button fx:id="promjeneButton" minHeight="40.0" mnemonicParsing="false" text="Promjene" />
+      <Button fx:id="promjeneButton" minHeight="40.0" mnemonicParsing="false" onAction="#promjene" text="Promjene" />
       <Button fx:id="mojProfilButton" minHeight="40.0" mnemonicParsing="false" onAction="#mojProfil" text="Moj profil" />
       <Button fx:id="backToLoginButton" minHeight="40.0" mnemonicParsing="false" onAction="#backToLogin" text="Povratak na prijavu" />
    </children>

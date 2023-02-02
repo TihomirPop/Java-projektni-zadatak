@@ -241,6 +241,7 @@ public class EditShowsController {
                 if(response == daButton) {
                     try {
                         DataBase.deleteShow(showComboBox.getValue());
+
                         refresh();
                     } catch (BazaPodatakaException e) {
                         logger.error(e.getMessage(), e);
