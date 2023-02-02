@@ -4,6 +4,8 @@ import hr.java.projekt.db.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.exceptions.KriviInputException;
+import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.util.Promjene;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -241,9 +245,16 @@ public class EditShowsController {
                 if(response == daButton) {
                     try {
                         DataBase.deleteShow(showComboBox.getValue());
-
+                        Promjene.addPromjena(new Promjena(
+                                null,
+                                "Obriši show",
+                                showComboBox.getValue().getOrginalniNaslov(),
+                                "OBRISANO",
+                                Main.currentUser.getRole(),
+                                LocalDateTime.now()
+                        ));
                         refresh();
-                    } catch (BazaPodatakaException e) {
+                    } catch (BazaPodatakaException | PromjeneException e) {
                         logger.error(e.getMessage(), e);
                         e.printStackTrace();
                     }
@@ -251,6 +262,7 @@ public class EditShowsController {
             });
         }
     }
+
     @FXML
     private void save() {
         try {
@@ -316,23 +328,36 @@ public class EditShowsController {
                                                         kraj),
                                                 Integer.parseInt(brojEpizoda)
                                         ));
-                                    } else DataBase.updateShow(new Series(
-                                            showComboBox.getValue().getId(),
-                                            orginalniNaziv,
-                                            prevedeniNaziv,
-                                            opis,
-                                            slika,
-                                            studio,
-                                            genres,
-                                            sequels,
-                                            new StartEndDate(
-                                                    pocetak,
-                                                    kraj),
-                                            Integer.parseInt(brojEpizoda)
-                                    ));
+                                        Promjene.addPromjena(new Promjena(
+                                                null,
+                                                "Dodaj seriju",
+                                                "NE POSTOJI",
+                                                orginalniNaziv,
+                                                Main.currentUser.getRole(),
+                                                LocalDateTime.now()
+                                        ));
+                                    } else {
+                                        Show show = showComboBox.getValue();
+                                        DataBase.updateShow(new Series(
+                                                show.getId(),
+                                                orginalniNaziv,
+                                                prevedeniNaziv,
+                                                opis,
+                                                slika,
+                                                studio,
+                                                genres,
+                                                sequels,
+                                                new StartEndDate(
+                                                        pocetak,
+                                                        kraj),
+                                                Integer.parseInt(brojEpizoda)
+                                        ));
+
+                                        updateShowPromjene(show);
+                                    }
                                     refresh();
                                 }
-                            } catch (BazaPodatakaException e) {
+                            } catch (BazaPodatakaException | PromjeneException e) {
                                 logger.error(e.getMessage(), e);
                                 e.printStackTrace();
                             }
@@ -362,9 +387,18 @@ public class EditShowsController {
                                                 sequels,
                                                 pocetak
                                         ));
+                                        Promjene.addPromjena(new Promjena(
+                                                null,
+                                                "Dodaj film",
+                                                "NE POSTOJI",
+                                                orginalniNaziv,
+                                                Main.currentUser.getRole(),
+                                                LocalDateTime.now()
+                                        ));
                                     } else {
+                                        Show show = showComboBox.getValue();
                                         DataBase.updateShow(new Movie(
-                                                showComboBox.getValue().getId(),
+                                                show.getId(),
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
@@ -374,10 +408,12 @@ public class EditShowsController {
                                                 sequels,
                                                 pocetak
                                         ));
+
+                                        updateShowPromjene(show);
                                     }
                                     refresh();
                                 }
-                            } catch (BazaPodatakaException e) {
+                            } catch (BazaPodatakaException | PromjeneException e) {
                                 logger.error(e.getMessage(), e);
                                 e.printStackTrace();
                             }
@@ -390,5 +426,97 @@ public class EditShowsController {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
+    }
+
+    private void updateShowPromjene(Show show) throws PromjeneException{
+        List<String> podatak = new ArrayList<>();
+        List<String> staraVrijednost = new ArrayList<>();
+        List<String> novaVrijednost = new ArrayList<>();
+
+        if(!orginalniNazivTextField.getText().equals(show.getOrginalniNaslov())){
+            podatak.add("Orginalni naslov od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getOrginalniNaslov());
+            novaVrijednost.add(orginalniNazivTextField.getText());
+        }
+
+        if(!prevedeniNazivTextField.getText().equals(show.getPrevedeniNaslov())){
+            podatak.add("Prevedeni naslov od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getOrginalniNaslov());
+            novaVrijednost.add(prevedeniNazivTextField.getText());
+        }
+
+        if(!opisTextArea.getText().equals(show.getOpis())){
+            podatak.add("Opis od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getOpis());
+            novaVrijednost.add(opisTextArea.getText());
+        }
+
+        if(!lokacijaSlikeLabel.getText().equals(show.getSlika())){
+            podatak.add("Slika od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getSlika());
+            novaVrijednost.add(lokacijaSlikeLabel.getText());
+        }
+
+        if(!studioTextField.getText().equals(show.getStudio())){
+            podatak.add("Studio od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getStudio());
+            novaVrijednost.add(studioTextField.getText());
+        }
+
+        Set<Genre> zanrovi = new HashSet<>(zanroviListView.getSelectionModel().getSelectedItems());
+        if(!(zanrovi.equals(show.getGenres()))){
+            podatak.add("Žanrovi od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getGenres().toString());
+            novaVrijednost.add(zanrovi.toString());
+        }
+
+        List<Long> nastavci = nastavciListView.getItems().stream().mapToLong(Show::getId).boxed().toList();
+        if(!nastavci.equals(show.getIdSeqience())){
+            podatak.add("Id nastavaka od " + show.getOrginalniNaslov());
+            staraVrijednost.add(show.getIdSeqience().toString());
+            novaVrijednost.add(nastavci.toString());
+        }
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.YYYY.");
+        if(show instanceof Series series){
+            if(!pocetakDatePicker.getValue().isEqual(series.getStartEndDate().startDate())){
+                podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                staraVrijednost.add(series.getStartEndDate().startDate().format(format));
+                novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+            }
+
+            if(!krajDatePicker.getValue().isEqual(series.getStartEndDate().endDate())){
+                podatak.add("Kraj od " + show.getOrginalniNaslov());
+                staraVrijednost.add(series.getStartEndDate().endDate().format(format));
+                novaVrijednost.add(krajDatePicker.getValue().format(format));
+            }
+
+            Integer brojEpizoda = Integer.parseInt(brojEpizodaTextField.getText());
+            if(!brojEpizoda.equals(series.getNumberOfEpisodes())){
+                podatak.add("Broj epizoda od " + show.getOrginalniNaslov());
+                staraVrijednost.add(series.getNumberOfEpisodes().toString());
+                novaVrijednost.add(brojEpizoda.toString());
+            }
+        }
+        else if(show instanceof Movie movie){
+            if(!pocetakDatePicker.getValue().isEqual(movie.getReleaseDate())){
+                podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                staraVrijednost.add(movie.getReleaseDate().format(format));
+                novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+            }
+        }
+
+        List<Promjena> promjene = new ArrayList<>(podatak.size());
+        for(int i = 0; i < podatak.size(); i++){
+            promjene.add(new Promjena(
+                    null,
+                    podatak.get(i),
+                    staraVrijednost.get(i),
+                    novaVrijednost.get(i),
+                    Main.currentUser.getRole(),
+                    LocalDateTime.now()
+            ));
+        }
+        Promjene.addPromjene(promjene);
     }
 }

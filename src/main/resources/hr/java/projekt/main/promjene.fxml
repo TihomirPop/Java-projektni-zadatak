@@ -22,11 +22,11 @@
        <fx:include source="izbornik.fxml" GridPane.columnIndex="1" />
       <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
         <columns>
-          <TableColumn fx:id="promjenaTableColumn" maxWidth="300.0" prefWidth="250.0" resizable="false" text="Promjena" />
-            <TableColumn fx:id="staraTableColumn" maxWidth="300.0" prefWidth="250.0" text="Stara vrijednost" />
-            <TableColumn fx:id="novaTableColumn" maxWidth="300.0" prefWidth="250.0" text="Nova vrijednost" />
-          <TableColumn fx:id="roleTableColumn" maxWidth="117.0" prefWidth="57.0" text="Role" />
-            <TableColumn fx:id="vrijemeTableColumn" maxWidth="150.0" prefWidth="100.0" text="Vrijeme" />
+          <TableColumn fx:id="promjenaTableColumn" maxWidth="1000.0" prefWidth="250.0" text="Promjena" />
+            <TableColumn fx:id="staraTableColumn" maxWidth="1000.0" prefWidth="250.0" text="Stara vrijednost" />
+            <TableColumn fx:id="novaTableColumn" maxWidth="1000.0" prefWidth="250.0" text="Nova vrijednost" />
+          <TableColumn fx:id="roleTableColumn" maxWidth="37.0" prefWidth="37.0" text="Role" />
+            <TableColumn fx:id="vrijemeTableColumn" maxWidth="120.0" prefWidth="120.0" text="Vrijeme" />
         </columns>
          <GridPane.margin>
             <Insets bottom="10.0" />
