@@ -1,9 +1,12 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.exceptions.KriviInputException;
+import hr.java.projekt.exceptions.PromjeneException;
 import hr.java.projekt.util.Datoteke;
+import hr.java.projekt.util.Promjene;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,7 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ls.LSException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,7 +161,7 @@ public class EditUsersController {
                 return;
             }
             List<User> sameUser = users.stream().filter(u -> (u.getUsername().equals(korisnickoIme))).toList();
-            if (!sameUser.isEmpty()) {
+            if (!(sameUser.isEmpty() || korisnickoIme.equals(selectedUser.getUsername()))) {
                 logger.warn("To korisnicko ime ili email se vec koristi", new KriviInputException("To korisnicko ime ili email se vec koristi"));
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Pogrešan unos podataka");
@@ -174,12 +179,36 @@ public class EditUsersController {
             alert.showAndWait().ifPresent(response -> {
                 try {
                     if (response == daButton){
+                        List<Promjena> promjene = new ArrayList<>();
+                        if(!korisnickoIme.equals(selectedUser.getUsername()))
+                            promjene.add(new Promjena(
+                                    null,
+                                    "Korisničko ime od " + selectedUser.getUsername(),
+                                    selectedUser.getUsername(),
+                                    korisnickoIme,
+                                    Main.currentUser.getRole(),
+                                    LocalDateTime.now()
+                            ));
+
+                        if(!razinaPrava.equals(selectedUser.getRole()))
+                            promjene.add(new Promjena(
+                                    null,
+                                    "Razina prava od " + selectedUser.getUsername(),
+                                    selectedUser.getRole().toString(),
+                                    razinaPrava.toString(),
+                                    Main.currentUser.getRole(),
+                                    LocalDateTime.now()
+                            ));
+
+                        if(!promjene.isEmpty())
+                            Promjene.addPromjene(promjene);
+
                         selectedUser.setUsername(korisnickoIme);
                         selectedUser.setRole(razinaPrava);
                         Datoteke.editUser(selectedUser);
                         users = Datoteke.getUsers();
                     }
-                } catch (DatotekaException e){
+                } catch (DatotekaException | PromjeneException e){
                     logger.error(e.getMessage(), e);
                     e.printStackTrace();
                 }
@@ -204,6 +233,16 @@ public class EditUsersController {
                 try {
                     if (response == daButton) {
                         Datoteke.deleteUser(selectedUser);
+
+                        Promjene.addPromjena(new Promjena(
+                                null,
+                                "Obriši korisnika",
+                                selectedUser.getUsername(),
+                                "OBRISANO",
+                                Main.currentUser.getRole(),
+                                LocalDateTime.now()
+                        ));
+
                         users = Datoteke.getUsers();
                         userTableView.setItems(FXCollections.observableList(users));
                         korisnickoImeTextfield.setText("");
@@ -213,7 +252,7 @@ public class EditUsersController {
                         spremiButton.setDisable(true);
                         obrisiButton.setDisable(true);
                     }
-                } catch (DatotekaException e){
+                } catch (DatotekaException | PromjeneException e){
                     logger.error(e.getMessage(), e);
                     e.printStackTrace();
                 }
