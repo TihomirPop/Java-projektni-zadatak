@@ -4,6 +4,7 @@ import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.threads.AddPromjeneThread;
 import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Hash;
@@ -147,14 +148,14 @@ public class MojProfilController {
                 ));
 
             if(!promjene.isEmpty())
-                Promjene.addPromjene(promjene);
+                new Thread(new AddPromjeneThread(promjene)).start();
 
             if (!password.isEmpty())
                 Main.currentUser.setPassword(password);
             Main.currentUser.setEmail(email);
             Main.currentUser.setUsername(username);
             Datoteke.editUser(Main.currentUser);
-        } catch (DatotekaException | PromjeneException e){
+        } catch (DatotekaException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }

@@ -1,5 +1,7 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.threads.AddPromjenaThread;
+import hr.java.projekt.threads.AddPromjeneThread;
 import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
@@ -242,16 +244,16 @@ public class EditShowsController {
                 if(response == daButton) {
                     try {
                         DataBase.deleteShow(showComboBox.getValue());
-                        Promjene.addPromjena(new Promjena(
+                        new Thread( new AddPromjenaThread(new Promjena(
                                 null,
                                 "Obriši show",
                                 showComboBox.getValue().getOrginalniNaslov(),
                                 "OBRISANO",
                                 Main.currentUser.getRole(),
                                 LocalDateTime.now()
-                        ));
+                        ))).start();
                         refresh();
-                    } catch (BazaPodatakaException | PromjeneException e) {
+                    } catch (BazaPodatakaException e) {
                         logger.error(e.getMessage(), e);
                         e.printStackTrace();
                     }
@@ -325,14 +327,14 @@ public class EditShowsController {
                                                         kraj),
                                                 Integer.parseInt(brojEpizoda)
                                         ));
-                                        Promjene.addPromjena(new Promjena(
+                                        new Thread(new AddPromjenaThread(new Promjena(
                                                 null,
                                                 "Dodaj seriju",
                                                 "NE POSTOJI",
                                                 orginalniNaziv,
                                                 Main.currentUser.getRole(),
                                                 LocalDateTime.now()
-                                        ));
+                                        ))).start();
                                     } else {
                                         Show show = showComboBox.getValue();
                                         DataBase.updateShow(new Series(
@@ -384,14 +386,14 @@ public class EditShowsController {
                                                 sequels,
                                                 pocetak
                                         ));
-                                        Promjene.addPromjena(new Promjena(
+                                        new Thread(new AddPromjenaThread(new Promjena(
                                                 null,
                                                 "Dodaj film",
                                                 "NE POSTOJI",
                                                 orginalniNaziv,
                                                 Main.currentUser.getRole(),
                                                 LocalDateTime.now()
-                                        ));
+                                        ))).start();
                                     } else {
                                         Show show = showComboBox.getValue();
                                         DataBase.updateShow(new Movie(
@@ -548,6 +550,6 @@ public class EditShowsController {
                     LocalDateTime.now()
             ));
         }
-        Promjene.addPromjene(promjene);
+        new Thread(new AddPromjeneThread(promjene)).start();
     }
 }

@@ -2,22 +2,23 @@ package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.threads.AddPromjenaThread;
 
 import java.io.*;
 import java.util.List;
 
 public class Promjene {
     private static final String PROMJENE_PATH = "dat/promjene.dat";
-    public static List<Promjena> getPromjene() throws PromjeneException {
+    public synchronized static List<Promjena> getPromjene() throws PromjeneException {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(PROMJENE_PATH))) {
             return (List<Promjena>) in.readObject();
         } catch (ClassNotFoundException | IOException e) {
             throw new PromjeneException(e);
         }
     }
-    public static void addPromjena(Promjena promjena) throws PromjeneException {
+    public synchronized static void addPromjena(Promjena promjena) throws PromjeneException {
         List<Promjena> promjene = getPromjene();
-        promjena.setId(Long.valueOf(promjene.size() + 1));
+        promjena.setId((long) (promjene.size() + 1));
         promjene.add(promjena);
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(PROMJENE_PATH))) {
@@ -26,10 +27,10 @@ public class Promjene {
             throw new PromjeneException(e);
         }
     }
-    public static void addPromjene(List<Promjena> novePromjene) throws PromjeneException{
+    public synchronized static void addPromjene(List<Promjena> novePromjene) throws PromjeneException{
         List<Promjena> promjene = getPromjene();
         for(Promjena promjena: novePromjene){
-            promjena.setId(Long.valueOf(promjene.size() + 1));
+            promjena.setId((long) (promjene.size() + 1));
             promjene.add(promjena);
         }
 

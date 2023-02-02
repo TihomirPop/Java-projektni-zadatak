@@ -5,6 +5,8 @@ import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.threads.AddPromjenaThread;
+import hr.java.projekt.threads.AddPromjeneThread;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Promjene;
 import javafx.application.Platform;
@@ -201,14 +203,14 @@ public class EditUsersController {
                             ));
 
                         if(!promjene.isEmpty())
-                            Promjene.addPromjene(promjene);
+                            new Thread(new AddPromjeneThread(promjene)).start();
 
                         selectedUser.setUsername(korisnickoIme);
                         selectedUser.setRole(razinaPrava);
                         Datoteke.editUser(selectedUser);
                         users = Datoteke.getUsers();
                     }
-                } catch (DatotekaException | PromjeneException e){
+                } catch (DatotekaException e){
                     logger.error(e.getMessage(), e);
                     e.printStackTrace();
                 }
@@ -234,14 +236,14 @@ public class EditUsersController {
                     if (response == daButton) {
                         Datoteke.deleteUser(selectedUser);
 
-                        Promjene.addPromjena(new Promjena(
+                        new Thread( new AddPromjenaThread(new Promjena(
                                 null,
                                 "Obriši korisnika",
                                 selectedUser.getUsername(),
                                 "OBRISANO",
                                 Main.currentUser.getRole(),
                                 LocalDateTime.now()
-                        ));
+                        ))).start();
 
                         users = Datoteke.getUsers();
                         userTableView.setItems(FXCollections.observableList(users));
@@ -252,7 +254,7 @@ public class EditUsersController {
                         spremiButton.setDisable(true);
                         obrisiButton.setDisable(true);
                     }
-                } catch (DatotekaException | PromjeneException e){
+                } catch (DatotekaException e){
                     logger.error(e.getMessage(), e);
                     e.printStackTrace();
                 }

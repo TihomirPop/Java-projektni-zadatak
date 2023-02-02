@@ -5,6 +5,7 @@ import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.threads.AddPromjenaThread;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Hash;
 import hr.java.projekt.util.Promjene;
@@ -85,16 +86,16 @@ public class RegisterController {
             }
             Datoteke.addUser(new User(null, email, username, Hash.hash(password), 1, false));
 
-            Promjene.addPromjena(new Promjena(
+            new Thread( new AddPromjenaThread(new Promjena(
                     null,
                     "Dodaj korisnika",
                     "NE POSTOJI",
                     username,
                     1,
                     LocalDateTime.now()
-            ));
+            ))).start();
 
-        } catch (DatotekaException | KriviInputException | PromjeneException e){
+        } catch (DatotekaException | KriviInputException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
