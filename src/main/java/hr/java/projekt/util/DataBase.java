@@ -116,7 +116,11 @@ public class DataBase {
                     show.getIdSeqience().add(show.getId());
             }
 
-            return shows;
+            return shows
+                    .stream()
+                    .sorted(Comparator.comparing(Show::getPrevedeniNaslov))
+                    .collect(Collectors.toList());
+
         } catch (SQLException | IOException e) {
             throw new BazaPodatakaException(e);
         }
@@ -342,7 +346,18 @@ public class DataBase {
             while(rs.next())
                 showIds.add(rs.getLong("SHOW_ID"));
 
-            return shows.stream().filter(show -> showIds.contains(show.getId())).collect(Collectors.toList());
+            return shows
+                    .stream()
+                    .filter(show -> showIds.contains(show.getId()))
+                    .sorted(Comparator.comparing((Show s) -> {
+                        try {
+                            return DataBase.getUserShow(user, s).getScore();
+                        } catch (BazaPodatakaException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).reversed().thenComparing(Show::getPrevedeniNaslov))
+                    .collect(Collectors.toList());
+
         } catch (SQLException | IOException e) {
             throw new BazaPodatakaException(e);
         }

@@ -31,7 +31,7 @@
             <TableColumn fx:id="naslovTableColumn" maxWidth="300.0" prefWidth="300.0" text="Naslov" />
             <TableColumn fx:id="zanroviTableColumn" maxWidth="300.0" prefWidth="300.0" sortable="false" text="Žanrovi" />
           <TableColumn fx:id="tipTableColumn" maxWidth="117.0" prefWidth="117.0" text="Tip" />
-            <TableColumn fx:id="prosjekTableColumn" maxWidth="90.0" prefWidth="90.0" text="Prosjek" />
+            <TableColumn fx:id="prosjekTableColumn" maxWidth="90.0" prefWidth="90.0" sortable="false" text="Prosjek" />
         </columns>
          <GridPane.margin>
             <Insets bottom="10.0" />

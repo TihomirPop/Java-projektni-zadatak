@@ -31,7 +31,7 @@
             <TableColumn fx:id="naslovTableColumn" maxWidth="300.0" prefWidth="300.0" text="Naslov" />
             <TableColumn fx:id="zanroviTableColumn" maxWidth="300.0" prefWidth="300.0" sortable="false" text="Žanrovi" />
           <TableColumn fx:id="tipTableColumn" maxWidth="117.0" prefWidth="117.0" text="Tip" />
-            <TableColumn fx:id="ocjenaTableColumn" maxWidth="90.0" prefWidth="90.0" text="Ocjena" />
+            <TableColumn fx:id="ocjenaTableColumn" maxWidth="90.0" prefWidth="90.0" sortable="false" text="Ocjena" />
         </columns>
       </TableView>
       <GridPane fx:id="takeFocus" GridPane.columnIndex="1" GridPane.rowIndex="1">

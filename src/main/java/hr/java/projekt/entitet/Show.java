@@ -102,7 +102,7 @@ public abstract class Show extends Entitet implements Shows {
 
     @Override
     public String toString() {
-        return orginalniNaslov;
+        return prevedeniNaslov;
     }
     @Override
     public Double getProsjek(){

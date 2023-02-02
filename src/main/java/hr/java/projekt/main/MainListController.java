@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainListController {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -63,7 +64,15 @@ public class MainListController {
     public void initialize() {
         try {
             Platform.runLater(() -> takeFocus.requestFocus());
-            showList = DataBase.getShows();
+
+            showList = DataBase.getShows()
+                    .stream()
+                    .sorted(Comparator
+                            .comparing(Show::getProsjek)
+                            .reversed()
+                            .thenComparing(Show::getPrevedeniNaslov))
+                    .collect(Collectors.toList());
+
             for (Show show : showList)
                 prosjekMap.put(show, show.getProsjek());
 
@@ -85,7 +94,7 @@ public class MainListController {
                     string = "Film";
                 return new SimpleStringProperty(string);
             });
-            prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()) < 10 ? prosjekMap.get(data.getValue().getShow()) : 9.99)));
+            prosjekTableColumn.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f", prosjekMap.get(data.getValue().getShow()))));
             showTableView.setRowFactory(tableView -> {
                 final TableRow<ImageShow<Show>> row = new TableRow<>();
 
