@@ -6,6 +6,7 @@ module hr.java.projekt.main {
     requires java.mail;
     requires java.datatransfer;
     requires java.desktop;
+    requires Mal4J;
 
 
     opens hr.java.projekt.main to javafx.fxml;

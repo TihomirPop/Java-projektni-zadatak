@@ -6,7 +6,11 @@ import hr.java.projekt.main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,11 +32,16 @@ public abstract class Show extends Entitet implements Shows {
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
         this.opis = opis;
-        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4))) {
+        String ispravnaSlika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
+        if(slika != null && !slika.equals(ispravnaSlika)) {
             try {
-                this.slika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
-                Files.deleteIfExists(Path.of(this.slika));
-                Files.copy(Path.of(slika), Path.of(this.slika));
+                if(slika.startsWith("https://"))
+                    this.slika = slika;
+                else {
+                    this.slika = ispravnaSlika;
+                    Files.deleteIfExists(Path.of(this.slika));
+                    Files.copy(Path.of(slika), Path.of(this.slika));
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

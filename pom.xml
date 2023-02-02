@@ -53,6 +53,11 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>dev.katsute</groupId>
+            <artifactId>mal4j</artifactId>
+            <version>3.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
