@@ -91,7 +91,7 @@
                         <Insets right="5.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField fx:id="vrijemeTextField" onAction="#filter" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="vrijemeTextField" onAction="#filter" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets left="5.0" right="5.0" />
                      </GridPane.margin>

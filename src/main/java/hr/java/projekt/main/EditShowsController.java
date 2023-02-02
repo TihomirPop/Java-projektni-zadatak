@@ -476,30 +476,64 @@ public class EditShowsController {
 
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.YYYY.");
         if(show instanceof Series series){
-            if(!pocetakDatePicker.getValue().isEqual(series.getStartEndDate().startDate())){
-                podatak.add("Pocetak od " + show.getOrginalniNaslov());
-                staraVrijednost.add(series.getStartEndDate().startDate().format(format));
-                novaVrijednost.add(pocetakDatePicker.getValue().format(format));
-            }
+            if(tipComboBox.getValue().equals("Serija")) {
+                if (!pocetakDatePicker.getValue().isEqual(series.getStartEndDate().startDate())) {
+                    podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(series.getStartEndDate().startDate().format(format));
+                    novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+                }
 
-            if(!krajDatePicker.getValue().isEqual(series.getStartEndDate().endDate())){
-                podatak.add("Kraj od " + show.getOrginalniNaslov());
-                staraVrijednost.add(series.getStartEndDate().endDate().format(format));
-                novaVrijednost.add(krajDatePicker.getValue().format(format));
-            }
+                if (!krajDatePicker.getValue().isEqual(series.getStartEndDate().endDate())) {
+                    podatak.add("Kraj od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(series.getStartEndDate().endDate().format(format));
+                    novaVrijednost.add(krajDatePicker.getValue().format(format));
+                }
 
-            Integer brojEpizoda = Integer.parseInt(brojEpizodaTextField.getText());
-            if(!brojEpizoda.equals(series.getNumberOfEpisodes())){
-                podatak.add("Broj epizoda od " + show.getOrginalniNaslov());
-                staraVrijednost.add(series.getNumberOfEpisodes().toString());
-                novaVrijednost.add(brojEpizoda.toString());
+                Integer brojEpizoda = Integer.parseInt(brojEpizodaTextField.getText());
+                if (!brojEpizoda.equals(series.getNumberOfEpisodes())) {
+                    podatak.add("Broj epizoda od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(series.getNumberOfEpisodes().toString());
+                    novaVrijednost.add(brojEpizoda.toString());
+                }
+            }
+            else {
+                if (!pocetakDatePicker.getValue().isEqual(series.getStartEndDate().startDate())) {
+                    podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(series.getStartEndDate().startDate().format(format));
+                    novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+                }
+
+                podatak.add("Serija u film - " + show.getOrginalniNaslov());
+                staraVrijednost.add("Serija");
+                novaVrijednost.add("Film");
             }
         }
         else if(show instanceof Movie movie){
-            if(!pocetakDatePicker.getValue().isEqual(movie.getReleaseDate())){
-                podatak.add("Pocetak od " + show.getOrginalniNaslov());
-                staraVrijednost.add(movie.getReleaseDate().format(format));
-                novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+            if(tipComboBox.getValue().equals("Film")) {
+                if (!pocetakDatePicker.getValue().isEqual(movie.getReleaseDate())) {
+                    podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(movie.getReleaseDate().format(format));
+                    novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+                }
+            }
+            else {
+                if (!pocetakDatePicker.getValue().isEqual(movie.getReleaseDate())) {
+                    podatak.add("Pocetak od " + show.getOrginalniNaslov());
+                    staraVrijednost.add(movie.getReleaseDate().format(format));
+                    novaVrijednost.add(pocetakDatePicker.getValue().format(format));
+                }
+
+                podatak.add("Kraj od " + show.getOrginalniNaslov());
+                staraVrijednost.add("NE POSTOJI");
+                novaVrijednost.add(krajDatePicker.getValue().format(format));
+
+                podatak.add("Broj epizoda od " + show.getOrginalniNaslov());
+                staraVrijednost.add("NE POSTOJI");
+                novaVrijednost.add(brojEpizodaTextField.getText());
+
+                podatak.add("Film u seriju - " + show.getOrginalniNaslov());
+                staraVrijednost.add("Film");
+                novaVrijednost.add("Serija");
             }
         }
 

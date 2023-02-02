@@ -193,18 +193,21 @@ public class DataBase {
             connection.commit();
             connection.setAutoCommit(true);
 
+            connection.createStatement().executeUpdate("DELETE FROM SERIES WHERE ID = " + show.getId().toString());
+            connection.createStatement().executeUpdate("DELETE FROM MOVIES WHERE ID = " + show.getId().toString());
+
             if(show instanceof Series series){
-                PreparedStatement seriesPS = connection.prepareStatement("UPDATE SERIES SET START_DATE = ?, END_DATE = ?, NUMBER_OF_EPISODES = ? WHERE ID = ?");
-                seriesPS.setDate(1, Date.valueOf(series.getStartEndDate().startDate()));
-                seriesPS.setDate(2, Date.valueOf(series.getStartEndDate().endDate()));
-                seriesPS.setInt(3, series.getNumberOfEpisodes());
-                seriesPS.setLong(4, series.getId());
+                PreparedStatement seriesPS = connection.prepareStatement("INSERT INTO SERIES (ID, START_DATE, END_DATE, NUMBER_OF_EPISODES) VALUES (?, ?, ?, ?)");
+                seriesPS.setLong(1, series.getId());
+                seriesPS.setDate(2, Date.valueOf(series.getStartEndDate().startDate()));
+                seriesPS.setDate(3, Date.valueOf(series.getStartEndDate().endDate()));
+                seriesPS.setInt(4, series.getNumberOfEpisodes());
                 seriesPS.executeUpdate();
             }
             else if(show instanceof Movie movie){
-                PreparedStatement moviePS = connection.prepareStatement("UPDATE MOVIES SET RELEASE_DATE = ? WHERE ID = ?");
-                moviePS.setDate(1, Date.valueOf(movie.getReleaseDate()));
-                moviePS.setLong(2, movie.getId());
+                PreparedStatement moviePS = connection.prepareStatement("INSERT INTO MOVIES (ID, RELEASE_DATE) VALUES (?, ?)");
+                moviePS.setLong(1, movie.getId());
+                moviePS.setDate(2, Date.valueOf(movie.getReleaseDate()));
                 moviePS.executeUpdate();
             }
         } catch (SQLException | IOException e) {
