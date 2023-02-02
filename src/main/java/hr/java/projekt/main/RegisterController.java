@@ -1,10 +1,13 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
 import hr.java.projekt.exceptions.KriviInputException;
+import hr.java.projekt.exceptions.PromjeneException;
 import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Hash;
+import hr.java.projekt.util.Promjene;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -16,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalLong;
@@ -80,7 +84,17 @@ public class RegisterController {
                 return;
             }
             Datoteke.addUser(new User(null, email, username, Hash.hash(password), 1, false));
-        } catch (DatotekaException | KriviInputException e){
+
+            Promjene.addPromjena(new Promjena(
+                    null,
+                    "Dodaj korisnika",
+                    "NE POSTOJI",
+                    username,
+                    1,
+                    LocalDateTime.now()
+            ));
+
+        } catch (DatotekaException | KriviInputException | PromjeneException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }

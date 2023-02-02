@@ -5,9 +5,9 @@ Tpopovic
 3
 true
 2
-testmail@testmail.com
-test
-3083811468808981
+testmail@testmail.hr
+Test
+3208960996931
 2
 false
 3
@@ -16,3 +16,9 @@ Marina
 3208960996931
 1
 true
+4
+noviMail@noviMail.hr
+noviKorisnik
+3208960996931
+1
+false

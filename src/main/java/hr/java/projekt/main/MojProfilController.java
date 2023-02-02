@@ -1,9 +1,13 @@
 package hr.java.projekt.main;
 
+import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.DatotekaException;
+import hr.java.projekt.exceptions.PromjeneException;
 import hr.java.projekt.threads.SendVerificationEmailThread;
 import hr.java.projekt.util.Datoteke;
+import hr.java.projekt.util.Hash;
+import hr.java.projekt.util.Promjene;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,6 +15,8 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,7 +100,7 @@ public class MojProfilController {
             alert.getButtonTypes().setAll(daButton, neButton);
             alert.showAndWait().ifPresent(response -> {
                 if (response == daButton)
-                    spremiEmailiPassword(username, email, password);
+                    spremiUserPodatke(username, email, password);
             });
         } catch (DatotekaException e){
             logger.error(e.getMessage(), e);
@@ -102,19 +108,53 @@ public class MojProfilController {
         }
     }
 
-    private void spremiEmailiPassword(String username, String email, String password) {
+    private void spremiUserPodatke(String username, String email, String password) {
         try {
-            if (!password.isEmpty())
-                Main.currentUser.setPassword(password);
-            if (!email.equals(Main.currentUser.getEmail())) {
+            List<Promjena> promjene = new ArrayList<>();
+            if(!username.equals(Main.currentUser.getUsername()))
+                promjene.add(new Promjena(
+                        null,
+                        "Korisničko ime od " + Main.currentUser.getUsername(),
+                        Main.currentUser.getUsername(),
+                        username,
+                        Main.currentUser.getRole(),
+                        LocalDateTime.now()
+                ));
+
+            if(!username.equals(Main.currentUser.getUsername())) {
+                promjene.add(new Promjena(
+                        null,
+                        "Email od " + Main.currentUser.getUsername(),
+                        Main.currentUser.getEmail(),
+                        email,
+                        Main.currentUser.getRole(),
+                        LocalDateTime.now()
+                ));
+
                 Main.currentUser.setVerified(false);
                 verifikacijaLabel.setText("OPREZ!\nEmail nije verificiran!");
                 verificirajButton.setDisable(false);
             }
+
+            if(!password.isEmpty() && !Hash.hash(password).equals(Main.currentUser.getPassword()))
+                promjene.add(new Promjena(
+                        null,
+                        "Lozinka od " + Main.currentUser.getUsername(),
+                        Main.currentUser.getPassword().toString(),
+                        Hash.hash(password).toString(),
+                        Main.currentUser.getRole(),
+                        LocalDateTime.now()
+                ));
+
+            if(!promjene.isEmpty())
+                Promjene.addPromjene(promjene);
+
+            if (!password.isEmpty())
+                Main.currentUser.setPassword(password);
             Main.currentUser.setEmail(email);
             Main.currentUser.setUsername(username);
             Datoteke.editUser(Main.currentUser);
-        } catch (DatotekaException e){
+        } catch (DatotekaException | PromjeneException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
