@@ -1,18 +1,15 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.db.DataBase;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.exceptions.PromjeneException;
 import hr.java.projekt.util.Promjene;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

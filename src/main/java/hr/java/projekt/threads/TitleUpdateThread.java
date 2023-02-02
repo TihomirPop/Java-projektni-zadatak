@@ -1,8 +1,7 @@
 package hr.java.projekt.threads;
 
-import hr.java.projekt.db.DataBase;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.Movie;
-import hr.java.projekt.entitet.Movies;
 import hr.java.projekt.entitet.Show;
 import hr.java.projekt.entitet.Shows;
 import hr.java.projekt.exceptions.BazaPodatakaException;

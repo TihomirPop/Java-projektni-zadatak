@@ -1,6 +1,6 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.db.DataBase;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.exceptions.KriviInputException;
@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
 
 public class ShowViewController {

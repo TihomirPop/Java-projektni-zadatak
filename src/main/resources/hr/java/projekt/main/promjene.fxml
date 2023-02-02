@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -20,7 +25,7 @@
   </rowConstraints>
    <children>
        <fx:include source="izbornik.fxml" GridPane.columnIndex="1" />
-      <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
+      <TableView fx:id="tableView" onMouseClicked="#clickRow" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2147483647">
         <columns>
           <TableColumn fx:id="promjenaTableColumn" maxWidth="1000.0" prefWidth="250.0" text="Promjena" />
             <TableColumn fx:id="staraTableColumn" maxWidth="1000.0" prefWidth="250.0" text="Stara vrijednost" />
@@ -32,5 +37,103 @@
             <Insets bottom="10.0" />
          </GridPane.margin>
       </TableView>
+      <GridPane fx:id="takeFocus" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.5" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.5" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.5" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="22.5" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Stara vrijednost:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Role:" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Nova vrijednost:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Promjena:" GridPane.halignment="RIGHT">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </Label>
+            <GridPane GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Datum" GridPane.halignment="RIGHT">
+                     <GridPane.margin>
+                        <Insets right="5.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label text="Vrijeme" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="5.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <TextField fx:id="vrijemeTextField" onAction="#filter" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <DatePicker fx:id="datumDatePicker" maxWidth="250.0" onAction="#filter" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </GridPane.margin>
+                  </DatePicker>
+               </children>
+            </GridPane>
+            <RadioButton fx:id="prijeRadioButton" mnemonicParsing="false" onMouseClicked="#clickPrije" text="Prije" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </RadioButton>
+            <RadioButton fx:id="kasnijeRadioButton" mnemonicParsing="false" onMouseClicked="#clickKasnije" text="Kasnije" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets right="5.0" />
+               </GridPane.margin>
+            </RadioButton>
+            <TextField fx:id="promjenaTextField" onKeyTyped="#filter" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="novaTextField" onKeyTyped="#filter" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="staraTextField" onKeyTyped="#filter" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="roleComboBox" onAction="#filter" onMouseClicked="#clearRole" prefWidth="250.0" GridPane.columnIndex="3">
+               <GridPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </GridPane.margin>
+            </ComboBox>
+         </children>
+      </GridPane>
    </children>
 </GridPane>

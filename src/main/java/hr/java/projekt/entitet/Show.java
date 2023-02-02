@@ -1,6 +1,6 @@
 package hr.java.projekt.entitet;
 
-import hr.java.projekt.db.DataBase;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.main.Main;
 import org.slf4j.Logger;

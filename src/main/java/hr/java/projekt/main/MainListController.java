@@ -1,15 +1,13 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.db.DataBase;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
-import hr.java.projekt.exceptions.DatotekaException;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -17,20 +15,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Time;
 import java.util.*;
 
 public class MainListController {

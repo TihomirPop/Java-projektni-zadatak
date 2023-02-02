@@ -1,8 +1,5 @@
 package hr.java.projekt.entitet;
 
-import hr.java.projekt.db.DataBase;
-import javafx.scene.image.Image;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;

@@ -1,4 +1,4 @@
-package hr.java.projekt.db;
+package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
