@@ -38,10 +38,23 @@ public class MAL {
         Long id = -1l;
         String orginalniNaslov = anime.getTitle();
         String prevedeniNaslov = anime.getAlternativeTitles().getEnglish();
+        if(prevedeniNaslov.isEmpty())
+            prevedeniNaslov = orginalniNaslov;
         String opis = anime.getSynopsis().replaceAll("\\\\n", "\n");
         String slika = anime.getMainPicture().getLargeURL();
-        String studio = anime.getStudios()[0].getName();
-        List<String> animeGenres = Arrays.stream(anime.getGenres()).map(g -> g.getName().toUpperCase().replaceAll(" ", "_")).toList();
+
+        String studio;
+        if(anime.getStudios().length > 0)
+            studio = anime.getStudios()[0].getName();
+        else
+            studio = "UNKNOWN";
+
+        List<String> animeGenres = new ArrayList<>();
+        if(anime.getGenres().length > 0)
+            animeGenres = Arrays.stream(anime.getGenres()).map(g -> g.getName().toUpperCase().replaceAll(" ", "_")).toList();
+        else
+            animeGenres.add("ADVENTURE");
+
         List<String> genreNames = Arrays.stream(Genre.values()).map(Genre::toString).toList();
         Set<Genre> genres = new HashSet<>();
         for(String animeGenre: animeGenres)
