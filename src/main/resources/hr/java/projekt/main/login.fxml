@@ -24,14 +24,14 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TextField fx:id="usernameTextField" maxWidth="400.0" onAction="#login" promptText="username" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <TextField fx:id="usernameTextField" maxWidth="400.0" onAction="#login" promptText="korisničko ime" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <font>
             <Font name="Arial" size="18.0" />
          </font>
          <GridPane.margin>
             <Insets left="40.0" />
          </GridPane.margin></TextField>
-      <Label text="Username:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+      <Label text="Korisničko ime:" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
          <font>
             <Font name="Arial" size="18.0" />
          </font>
@@ -39,7 +39,7 @@
             <Insets right="40.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Password:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+      <Label text="Lozinka:" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
          <font>
             <Font name="Arial" size="18.0" />
          </font>
@@ -47,7 +47,7 @@
             <Insets right="40.0" />
          </GridPane.margin>
       </Label>
-      <PasswordField fx:id="passwordField" maxWidth="400.0" onAction="#login" promptText="password" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <PasswordField fx:id="passwordField" maxWidth="400.0" onAction="#login" promptText="lozinka" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <font>
             <Font name="Arial" size="18.0" />
          </font>
@@ -60,12 +60,12 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Button mnemonicParsing="false" onAction="#goToRegister" text="Go to register" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+      <Button mnemonicParsing="false" onAction="#goToRegister" text="Registriraj se" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Button mnemonicParsing="false" onAction="#goToMainList" text="Continue as guest" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+      <Button mnemonicParsing="false" onAction="#goToMainList" text="Nastavi kao gost" textAlignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
          <font>
             <Font size="18.0" />
          </font>
