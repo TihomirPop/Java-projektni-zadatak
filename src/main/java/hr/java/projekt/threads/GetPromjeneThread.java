@@ -8,6 +8,8 @@ import hr.java.projekt.util.Promjene;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GetPromjeneThread implements Runnable{
@@ -21,7 +23,9 @@ public class GetPromjeneThread implements Runnable{
     @Override
     public void run() {
         try {
-            promjene.addAll(Promjene.getPromjene());
+            List<Promjena> temp = Promjene.getPromjene();
+            Collections.reverse(temp);
+            promjene.addAll(temp);
             tableView.setItems(FXCollections.observableList(promjene));
         } catch (PromjeneException e) {
             throw new RuntimeException(e);

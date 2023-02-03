@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.List;
 
 public class Hash {
     public static String hash(String input, byte[] salt) {
@@ -76,10 +75,10 @@ public class Hash {
         return bytes;
     }
 
-    public static byte[] creatingRandomSalt() {
+    public static byte[] generateRandomSalt() {
         byte[] salt = new byte[16];
-        SecureRandom secure_random = new SecureRandom();
-        secure_random.nextBytes(salt)   ;
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(salt);
         return salt;
     }
 

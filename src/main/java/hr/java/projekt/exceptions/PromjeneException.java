@@ -1,6 +1,6 @@
 package hr.java.projekt.exceptions;
 
-public class PromjeneException extends Exception{
+public class PromjeneException extends RuntimeException{
     public PromjeneException() {
     }
 

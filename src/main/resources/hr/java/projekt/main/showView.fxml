@@ -170,7 +170,7 @@
                         <Insets top="80.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="nastavak" onMouseClicked="#goToNastavak" style="-fx-text-fill: blue; -fx-cursor: hand;" text="N/A" translateX="100.0" translateY="-21.0" underline="true">
+                  <Label fx:id="nastavak" onMouseClicked="#goToNastavak" style="-fx-text-fill: white; -fx-cursor: hand;" text="N/A" translateX="100.0" translateY="-21.0" underline="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -183,7 +183,7 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="prethodnik" onMouseClicked="#goToPrethodnik" style="-fx-text-fill: blue; -fx-cursor: hand;" text="N/A" translateX="100.0" translateY="-21.0" underline="true">
+                  <Label fx:id="prethodnik" onMouseClicked="#goToPrethodnik" style="-fx-text-fill: white; -fx-cursor: hand;" text="N/A" translateX="100.0" translateY="-21.0" underline="true">
                      <font>
                         <Font size="14.0" />
                      </font>
