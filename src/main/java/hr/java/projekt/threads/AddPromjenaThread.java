@@ -2,11 +2,10 @@ package hr.java.projekt.threads;
 
 import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.exceptions.PromjeneException;
-import hr.java.projekt.util.Datoteke;
 import hr.java.projekt.util.Promjene;
 
 public class AddPromjenaThread implements Runnable{
-    private Promjena promjena;
+    private final Promjena promjena;
 
     public AddPromjenaThread(Promjena promjena) {
         this.promjena = promjena;

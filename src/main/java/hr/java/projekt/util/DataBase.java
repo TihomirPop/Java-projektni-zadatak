@@ -2,16 +2,13 @@ package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
-import hr.java.projekt.main.Main;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.*;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 

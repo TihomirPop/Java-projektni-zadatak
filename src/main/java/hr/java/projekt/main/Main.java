@@ -4,7 +4,6 @@ import hr.java.projekt.entitet.Show;
 import hr.java.projekt.entitet.User;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.threads.TitleUpdateThread;
-import hr.java.projekt.util.EmailVerification;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;

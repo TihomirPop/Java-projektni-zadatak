@@ -4,8 +4,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
 
 public class ImageShow<T extends Show> {
     private T show;

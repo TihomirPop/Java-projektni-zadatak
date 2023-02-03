@@ -1,22 +1,19 @@
 package hr.java.projekt.main;
 
 import hr.java.projekt.entitet.Promjena;
-import hr.java.projekt.exceptions.PromjeneException;
 import hr.java.projekt.threads.GetPromjeneThread;
-import hr.java.projekt.util.Promjene;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import java.awt.datatransfer.StringSelection;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PromjeneController {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     @FXML
     private TextField promjenaTextField;
     @FXML
@@ -57,8 +52,8 @@ public class PromjeneController {
     private TableColumn<Promjena, String > vrijemeTableColumn;
     @FXML
     private GridPane takeFocus;
-    private List<Promjena> promjene;
-    private ToggleGroup vrijemeToggleGroup = new ToggleGroup();
+    private final ToggleGroup vrijemeToggleGroup = new ToggleGroup();
+    private List<Promjena> promjene = new ArrayList<>();
 
 
     @FXML
@@ -72,9 +67,9 @@ public class PromjeneController {
         staraTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStaraVrijednost()));
         novaTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNovaVrijednost()));
         roleTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getRole().toString()));
-        vrijemeTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getVrijeme().format(DateTimeFormatter.ofPattern("dd.MM.YYYY. HH:mm"))));
+        vrijemeTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getVrijeme().format(DateTimeFormatter.ofPattern("dd.MM.yyyy. HH:mm"))));
 
-        new Thread(new GetPromjeneThread(tableView)).start();
+        new Thread(new GetPromjeneThread(promjene, tableView)).start();
     }
 
     @FXML

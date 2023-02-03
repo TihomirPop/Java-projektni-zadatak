@@ -1,13 +1,12 @@
 package hr.java.projekt.util;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Hash {
     public static Long hash(String string){
         string = insertSalt(string);
         List<Long> longs = string.chars().mapToLong(n -> (long)n).boxed().toList();
-        Long key = 0l;
+        Long key = 0L;
         for(int i = 0; i < longs.size(); i++)
             key += longs.get(i) * (long)Math.pow(31, longs.size() - (i + 1));
         return key;

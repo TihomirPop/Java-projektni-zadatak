@@ -1,8 +1,5 @@
 package hr.java.projekt.entitet;
 
-import javafx.scene.image.Image;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 

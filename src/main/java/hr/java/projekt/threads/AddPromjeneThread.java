@@ -7,7 +7,7 @@ import hr.java.projekt.util.Promjene;
 import java.util.List;
 
 public class AddPromjeneThread implements Runnable{
-    private List<Promjena> promjene;
+    private final List<Promjena> promjene;
 
     public AddPromjeneThread(List<Promjena> promjene) {
         this.promjene = promjene;

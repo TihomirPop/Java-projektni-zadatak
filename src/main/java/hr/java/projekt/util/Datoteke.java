@@ -16,8 +16,6 @@ import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
 public class Datoteke {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
     public static final String USERS_PATH = "dat/users.txt";
     public static final int SIZE_OF_USERS = 6;
 

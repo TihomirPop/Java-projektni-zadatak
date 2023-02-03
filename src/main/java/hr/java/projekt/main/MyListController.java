@@ -1,8 +1,8 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
+import hr.java.projekt.util.DataBase;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -22,8 +22,10 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MyListController {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -55,10 +57,10 @@ public class MyListController {
     private RadioButton manjeRadioButton;
     @FXML
     private GridPane takeFocus;
-    private ToggleGroup tipToggleGroup = new ToggleGroup();
-    private ToggleGroup ocjeneFilterToggleGroup = new ToggleGroup();
+    private final ToggleGroup tipToggleGroup = new ToggleGroup();
+    private final ToggleGroup ocjeneFilterToggleGroup = new ToggleGroup();
     private List<Show> shows;
-    private Map<Show, Score> ocjeneMap = new HashMap<>();
+    private final Map<Show, Score> ocjeneMap = new HashMap<>();
 
     public void initialize() {
         try {
@@ -73,9 +75,9 @@ public class MyListController {
             naslovTableColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getShow().getPrevedeniNaslov()));
             zanroviTableColumn.setCellValueFactory(data -> {
                 List<Genre> genres = data.getValue().getShow().getGenres().stream().toList();
-                String string = genres.get(0).toString().substring(0, 1) + genres.get(0).toString().substring(1).toLowerCase();
+                String string = genres.get(0).toString().charAt(0) + genres.get(0).toString().substring(1).toLowerCase();
                 for (int i = 1; i < genres.size(); i++)
-                    string += ", " + genres.get(i).toString().substring(0, 1) + genres.get(i).toString().substring(1).toLowerCase();
+                    string += ", " + genres.get(i).toString().charAt(0) + genres.get(i).toString().substring(1).toLowerCase();
                 string = string.replaceAll("_", " ");
                 return new SimpleStringProperty(string);
             });

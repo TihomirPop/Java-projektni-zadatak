@@ -1,14 +1,13 @@
 package hr.java.projekt.main;
 
-import hr.java.projekt.threads.AddPromjenaThread;
-import hr.java.projekt.threads.AddPromjeneThread;
-import hr.java.projekt.util.DataBase;
 import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.threads.AddPromjenaThread;
+import hr.java.projekt.threads.AddPromjeneThread;
+import hr.java.projekt.util.DataBase;
 import hr.java.projekt.util.MAL;
-import hr.java.projekt.util.Promjene;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,15 +17,18 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EditShowsController {
@@ -72,7 +74,7 @@ public class EditShowsController {
     private Label brojEpizodaLabel;
     @FXML
     private CheckBox dodajSaInternetaCheckBox;
-    private FileChooser fileChooser = new FileChooser();
+    private final FileChooser fileChooser = new FileChooser();
     private List<Show> shows;
     private List<Show> showsWithNewShow;
 
@@ -93,13 +95,13 @@ public class EditShowsController {
             shows = DataBase.getShows();
             dodajSaInternetaCheckBox.setSelected(false);
             showsWithNewShow = new ArrayList<>();
-            showsWithNewShow.add(new Series(-1l, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
-            showsWithNewShow.get(0).getIdSeqience().add(-1l);
+            showsWithNewShow.add(new Series(-1L, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
+            showsWithNewShow.get(0).getIdSeqience().add(-1L);
             showsWithNewShow.addAll(shows);
             showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow));
             showComboBox.getSelectionModel().selectFirst();
             showNastavciComboBox.setItems(FXCollections.observableArrayList(shows));
-            nastavciListView.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getId().equals(-1l)).toList()));
+            nastavciListView.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getId().equals(-1L)).toList()));
             traziTextField.clear();
             traziNastavkeTextField.clear();
         } catch (BazaPodatakaException e) {
@@ -113,7 +115,7 @@ public class EditShowsController {
         if(show == null)
             return;
 
-        else if(!show.getId().equals(-1l) || dodajSaInternetaCheckBox.isSelected()){
+        else if(!show.getId().equals(-1L) || dodajSaInternetaCheckBox.isSelected()){
             orginalniNazivTextField.setText(show.getOrginalniNaslov());
             prevedeniNazivTextField.setText(show.getPrevedeniNaslov());
             lokacijaSlikeLabel.setText(show.getSlika());
@@ -268,7 +270,7 @@ public class EditShowsController {
     }
     @FXML
     private void delete(){
-        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1l)){
+        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1L)){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Brisanje");
             alert.setHeaderText("Želite li obrisati show?");
@@ -350,9 +352,9 @@ public class EditShowsController {
                                 if (response == daButton) {
                                     String finalSlika = updateSlika(slika);
 
-                                    if (showComboBox.getValue().getId().equals(-1l)) {
+                                    if (showComboBox.getValue().getId().equals(-1L)) {
                                         DataBase.addShow(new Series(
-                                                -1l,
+                                                -1L,
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
@@ -414,9 +416,9 @@ public class EditShowsController {
                                 if (response == daButton) {
                                     String finalSlika = updateSlika(slika);
 
-                                    if (showComboBox.getValue().getId().equals(-1l)) {
+                                    if (showComboBox.getValue().getId().equals(-1L)) {
                                         DataBase.addShow(new Movie(
-                                                -1l,
+                                                -1L,
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
@@ -541,7 +543,7 @@ public class EditShowsController {
             novaVrijednost.add(nastavci.toString());
         }
 
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.YYYY.");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         if(show instanceof Series series){
             if(tipComboBox.getValue().equals("Serija")) {
                 if (!pocetakDatePicker.getValue().isEqual(series.getStartEndDate().startDate())) {

@@ -14,12 +14,8 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalLong;
 
 public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -43,8 +39,7 @@ public class LoginController {
 
             if (greske.isEmpty()) {
                 try {
-                    User user = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
-                    Main.currentUser = user;
+                    Main.currentUser = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
                     goToMainList();
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 public class SendVerificationEmailThread extends Task<Void> {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    private String email;
-    private String kod;
+    private final String email;
+    private final String kod;
 
     public SendVerificationEmailThread(String email, String kod) {
         this.email = email;
