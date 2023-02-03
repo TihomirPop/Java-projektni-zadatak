@@ -69,14 +69,21 @@ public class MojProfilController {
                 return;
             }
 
-            List<User> sameUser = Datoteke.getUsers();
-            sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username) || user.getEmail().equals(email)).toList();
+            List<User> users = Datoteke.getUsers();
 
-            if (!sameUser.isEmpty() && (!username.equals(Main.currentUser.getUsername()) || !email.equals(Main.currentUser.getEmail()))) {
-                logger.warn("To korisnicko ime ili email se vec koristi");
+            if (!users.stream().filter(user -> user.getUsername().equals(username) && !user.getUsername().equals(Main.currentUser.getUsername())).toList().isEmpty()) {
+                logger.warn("To korisnicko ime se vec koristi");
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Pogrešan unos podataka");
-                alert.setHeaderText("Korisnicko ime ili email se vec koristi");
+                alert.setHeaderText("Korisnicko ime se vec koristi");
+                alert.showAndWait();
+                return;
+            }
+            if (!users.stream().filter(user -> user.getEmail().equals(email) && !user.getEmail().equals(Main.currentUser.getEmail())).toList().isEmpty()) {
+                logger.warn("Taj email se vec koristi");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pogrešan unos podataka");
+                alert.setHeaderText("Email se vec koristi");
                 alert.showAndWait();
                 return;
             }

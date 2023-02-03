@@ -205,7 +205,8 @@ public class EditUsersController {
                         selectedUser.setUsername(korisnickoIme);
                         selectedUser.setRole(razinaPrava);
                         Datoteke.editUser(selectedUser);
-                        users = Datoteke.getUsers();
+
+                        refresh();
                     }
                 } catch (DatotekaException e){
                     logger.error(e.getMessage(), e);
@@ -216,6 +217,17 @@ public class EditUsersController {
         } catch (KriviInputException e){
             logger.warn(e.getMessage(), e);
         }
+    }
+
+    private void refresh() throws DatotekaException {
+        users = Datoteke.getUsers();
+        userTableView.setItems(FXCollections.observableList(users));
+        korisnickoImeTextfield.setText("");
+        razinaPravaComboBox.getSelectionModel().clearSelection();
+        korisnickoImeTextfield.setDisable(true);
+        razinaPravaComboBox.setDisable(true);
+        spremiButton.setDisable(true);
+        obrisiButton.setDisable(true);
     }
 
     @FXML
@@ -241,14 +253,7 @@ public class EditUsersController {
                                 LocalDateTime.now()
                         ))).start();
 
-                        users = Datoteke.getUsers();
-                        userTableView.setItems(FXCollections.observableList(users));
-                        korisnickoImeTextfield.setText("");
-                        razinaPravaComboBox.getSelectionModel().clearSelection();
-                        korisnickoImeTextfield.setDisable(true);
-                        razinaPravaComboBox.setDisable(true);
-                        spremiButton.setDisable(true);
-                        obrisiButton.setDisable(true);
+                        refresh();
                     }
                 } catch (DatotekaException e){
                     logger.error(e.getMessage(), e);

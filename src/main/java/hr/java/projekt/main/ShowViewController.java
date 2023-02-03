@@ -210,7 +210,7 @@ public class ShowViewController {
                 userShow.setWatched(epizodeInt);
                 DataBase.updateUserShow(userShow);
             }
-            else if(!Main.currentUser.getVerified() && (DataBase.getNumberOfUsersShows(Main.currentUser) == 10)){
+            else if(!Main.currentUser.getVerified() && (DataBase.getNumberOfUsersShows(Main.currentUser) >= 10)){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Niste verificirani");
                 alert.setHeaderText("Korisnici koji nisu verificirani smiju imati samo 10 filmova i serija.");
