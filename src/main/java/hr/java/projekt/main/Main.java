@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Main extends Application {
@@ -35,6 +37,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), screenSize.getWidth(), screenSize.getHeight());
         scene.getStylesheets().add("style.css");
         stage.setTitle("MSL");
+        stage.getIcons().add(new Image(Path.of("dat/icon.png").toAbsolutePath().toString()));
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();

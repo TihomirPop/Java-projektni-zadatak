@@ -62,11 +62,17 @@ public class MojProfilController {
             String password = newPasswordTextField.getText();
             String confirmPassword = confirmPasswordTextField.getText();
 
+            if(username.isEmpty() || email.isEmpty()){
+                logger.warn("Korisnicko ime ili email je prazno");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Pogrešan unos podataka");
+                alert.setHeaderText("Korisnicko ime ili email je prazno");
+                alert.showAndWait();
+                return;
+            }
+
             List<User> sameUser = Datoteke.getUsers();
-            if (!username.isEmpty())
-                sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username)).toList();
-            if (!email.isEmpty())
-                sameUser = sameUser.stream().filter(user -> user.getEmail().equals(email)).toList();
+            sameUser = sameUser.stream().filter(user -> user.getUsername().equals(username) || user.getEmail().equals(email)).toList();
 
             if (!sameUser.isEmpty() && (!username.equals(Main.currentUser.getUsername()) || !email.equals(Main.currentUser.getEmail()))) {
                 logger.warn("To korisnicko ime ili email se vec koristi");
