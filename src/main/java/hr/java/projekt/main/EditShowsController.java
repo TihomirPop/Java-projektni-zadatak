@@ -21,6 +21,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -317,13 +319,6 @@ public class EditShowsController {
                     greske.add("pocetak");
 
 
-                if(slika.startsWith("https://")){
-                    URL url = new URL(slika);
-                    BufferedImage image = ImageIO.read(url);
-                    slika = "dat/img/" + orginalniNaziv.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
-                    ImageIO.write(image, "jpg", new File(slika));
-                }
-
                 if (tip.equals("Serija")) {
                     if (kraj == null)
                         greske.add("kraj");
@@ -337,10 +332,11 @@ public class EditShowsController {
                         ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
                         ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
                         alert.getButtonTypes().setAll(daButton, neButton);
-                        String finalSlika = slika;
                         alert.showAndWait().ifPresent(response -> {
                             try {
                                 if (response == daButton) {
+                                    String finalSlika = updateSlika(slika);
+
                                     if (showComboBox.getValue().getId().equals(-1l)) {
                                         DataBase.addShow(new Series(
                                                 -1l,
@@ -400,17 +396,18 @@ public class EditShowsController {
                         ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
                         ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
                         alert.getButtonTypes().setAll(daButton, neButton);
-                        String finalSlika1 = slika;
                         alert.showAndWait().ifPresent(response -> {
                             try {
                                 if (response == daButton) {
+                                    String finalSlika = updateSlika(slika);
+
                                     if (showComboBox.getValue().getId().equals(-1l)) {
                                         DataBase.addShow(new Movie(
                                                 -1l,
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                finalSlika1,
+                                                finalSlika,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -431,7 +428,7 @@ public class EditShowsController {
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                finalSlika1,
+                                                finalSlika,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -452,13 +449,34 @@ public class EditShowsController {
                 }
             }
         } catch (KriviInputException e){
-            logger.error(e.getMessage(), e);
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.warn(e.getMessage(), e);
         }
+    }
+
+    private String updateSlika(String slika) {
+        String finalSlika = null;
+        String ispravnaSlika = "dat/img/" + orginalniNazivTextField.getText().replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
+        if(!slika.equals(ispravnaSlika)) {
+            try {
+                if(slika.startsWith("https://")){
+                    URL url = new URL(slika);
+                    BufferedImage image = ImageIO.read(url);
+                    finalSlika = ispravnaSlika;
+                    ImageIO.write(image, slika.substring(slika.length() - 3), new File(finalSlika));
+                }
+                else {
+                    finalSlika = ispravnaSlika;
+                    Files.deleteIfExists(Path.of(finalSlika));
+                    Files.copy(Path.of(slika), Path.of(finalSlika));
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                e.printStackTrace();
+            }
+        }
+        else
+            finalSlika = slika;
+        return finalSlika;
     }
 
     private void updateShowPromjene(Show show) throws PromjeneException{

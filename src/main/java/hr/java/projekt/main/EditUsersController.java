@@ -217,8 +217,7 @@ public class EditUsersController {
             });
 
         } catch (KriviInputException e){
-            logger.error(e.getMessage(), e);
-            e.printStackTrace();
+            logger.warn(e.getMessage(), e);
         }
     }
 

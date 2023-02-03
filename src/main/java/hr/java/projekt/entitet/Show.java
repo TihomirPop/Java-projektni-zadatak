@@ -32,22 +32,7 @@ public abstract class Show extends Entitet implements Shows {
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
         this.opis = opis;
-
-        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4))) {
-            try {
-                if(slika.startsWith("https://"))
-                    this.slika = slika;
-                else {
-                    this.slika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
-                    Files.deleteIfExists(Path.of(this.slika));
-                    Files.copy(Path.of(slika), Path.of(this.slika));
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        else
-            this.slika = slika;
+        this.slika = slika;
         this.studio = studio;
         this.genres = genres;
         this.idSeqience = idSeqience;

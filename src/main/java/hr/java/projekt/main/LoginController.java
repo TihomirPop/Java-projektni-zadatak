@@ -55,9 +55,11 @@ public class LoginController {
                 }
             } else
                 Main.pogresanUnosPodataka(greske);
-        } catch (DatotekaException | KriviInputException e){
+        } catch (DatotekaException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        } catch (KriviInputException e){
+            logger.warn(e.getMessage(), e);
         }
     }
 

@@ -174,7 +174,7 @@ public class ShowViewController {
                             greske.add("epizode");
                             Main.pogresanUnosPodataka(greske);
                         } catch (KriviInputException e) {
-
+                            logger.warn(e.getMessage(), e);
                         }
                     }
                 } else if (show instanceof Movie) {
@@ -198,8 +198,7 @@ public class ShowViewController {
                 Main.pogresanUnosPodataka(greske);
             prosjek.setText(String.format("%.2f", show.getProsjek()));
         } catch (KriviInputException e){
-            logger.error(e.getMessage(), e);
-            e.printStackTrace();
+            logger.warn(e.getMessage(), e);
         }
     }
 
