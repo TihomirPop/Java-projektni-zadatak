@@ -141,12 +141,12 @@ public class MojProfilController {
                 verificirajButton.setDisable(false);
             }
 
-            if(!password.isEmpty() && !Hash.hash(password).equals(Main.currentUser.getPassword()))
+            if(!password.isEmpty() && !Hash.hash(password, Main.currentUser.getSalt()).equals(Main.currentUser.getPassword()))
                 promjene.add(new Promjena(
                         null,
                         "Lozinka od " + Main.currentUser.getUsername(),
-                        Main.currentUser.getPassword().toString(),
-                        Hash.hash(password).toString(),
+                        Main.currentUser.getPassword(),
+                        Hash.hash(password, Hash.decodeHexString(Main.currentUser.getSalt())),
                         Main.currentUser.getRole(),
                         LocalDateTime.now()
                 ));
@@ -155,7 +155,7 @@ public class MojProfilController {
                 new Thread(new AddPromjeneThread(promjene)).start();
 
             if (!password.isEmpty())
-                Main.currentUser.setPassword(password);
+                Main.currentUser.setPassword(Hash.hash(password, Main.currentUser.getSalt()));
             Main.currentUser.setEmail(email);
             Main.currentUser.setUsername(username);
             Datoteke.editUser(Main.currentUser);

@@ -78,7 +78,9 @@ public class RegisterController {
                 alert.showAndWait();
                 return;
             }
-            Datoteke.addUser(new User(null, email, username, Hash.hash(password), 1, false));
+
+            byte[] salt = Hash.creatingRandomSalt();
+            Datoteke.addUser(new User(null, email, username, Hash.hash(password, salt), Hash.bytesToHex(salt), 1, false));
 
             new Thread( new AddPromjenaThread(new Promjena(
                     null,

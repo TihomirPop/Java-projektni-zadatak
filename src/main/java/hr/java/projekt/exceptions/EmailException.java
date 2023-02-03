@@ -1,6 +1,6 @@
 package hr.java.projekt.exceptions;
 
-public class EmailException extends Exception{
+public class EmailException extends RuntimeException{
     public EmailException() {
     }
 

@@ -270,198 +270,209 @@ public class EditShowsController {
     }
     @FXML
     private void delete(){
-        if(showComboBox.getValue() != null && !showComboBox.getValue().getId().equals(-1L)){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Brisanje");
-            alert.setHeaderText("Želite li obrisati show?");
-            ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
-            ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
-            alert.getButtonTypes().setAll(daButton, neButton);
-            alert.showAndWait().ifPresent(response -> {
-                if(response == daButton) {
-                    try {
-                        DataBase.deleteShow(showComboBox.getValue());
-                        new Thread( new AddPromjenaThread(new Promjena(
-                                null,
-                                "Obriši show",
-                                showComboBox.getValue().getOrginalniNaslov(),
-                                "OBRISANO",
-                                Main.currentUser.getRole(),
-                                LocalDateTime.now()
-                        ))).start();
-                        refresh();
-                    } catch (BazaPodatakaException e) {
-                        logger.error(e.getMessage(), e);
-                        e.printStackTrace();
-                    }
-                }
-            });
+        if(showComboBox.getSelectionModel().isEmpty() || showComboBox.getValue().getId().equals(-1L)){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Odaberi show prije brisanja");
+            alert.setHeaderText("Show mora biti odabran prije brisanja");
+            alert.showAndWait();
+            return;
         }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Brisanje");
+        alert.setHeaderText("Želite li obrisati show?");
+        ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+        ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+        alert.getButtonTypes().setAll(daButton, neButton);
+        alert.showAndWait().ifPresent(response -> {
+            if(response == daButton) {
+                try {
+                    DataBase.deleteShow(showComboBox.getValue());
+                    new Thread( new AddPromjenaThread(new Promjena(
+                            null,
+                            "Obriši show",
+                            showComboBox.getValue().getOrginalniNaslov(),
+                            "OBRISANO",
+                            Main.currentUser.getRole(),
+                            LocalDateTime.now()
+                    ))).start();
+                    refresh();
+                } catch (BazaPodatakaException e) {
+                    logger.error(e.getMessage(), e);
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @FXML
     private void save() {
+        if(showComboBox.getSelectionModel().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Odaberi show prije spremanja");
+            alert.setHeaderText("Show mora biti odabran prije spremanja");
+            alert.showAndWait();
+            return;
+        }
         try {
-            if (!showComboBox.getSelectionModel().isEmpty()) {
-                String orginalniNaziv = orginalniNazivTextField.getText();
-                String prevedeniNaziv = prevedeniNazivTextField.getText();
-                String slika = lokacijaSlikeLabel.getText();
-                String studio = studioTextField.getText();
-                List<Long> sequels = nastavciListView.getItems().stream().mapToLong(Show::getId).boxed().collect(Collectors.toList());
-                String opis = opisTextArea.getText();
-                Set<Genre> genres = new HashSet<>(zanroviListView.getSelectionModel().getSelectedItems());
-                String tip = tipComboBox.getValue();
-                LocalDate pocetak = pocetakDatePicker.getValue();
-                LocalDate kraj = krajDatePicker.getValue();
-                String brojEpizoda = brojEpizodaTextField.getText();
-                List<String> greske = new ArrayList<>();
+            String orginalniNaziv = orginalniNazivTextField.getText();
+            String prevedeniNaziv = prevedeniNazivTextField.getText();
+            String slika = lokacijaSlikeLabel.getText();
+            String studio = studioTextField.getText();
+            List<Long> sequels = nastavciListView.getItems().stream().mapToLong(Show::getId).boxed().collect(Collectors.toList());
+            String opis = opisTextArea.getText();
+            Set<Genre> genres = new HashSet<>(zanroviListView.getSelectionModel().getSelectedItems());
+            String tip = tipComboBox.getValue();
+            LocalDate pocetak = pocetakDatePicker.getValue();
+            LocalDate kraj = krajDatePicker.getValue();
+            String brojEpizoda = brojEpizodaTextField.getText();
+            List<String> greske = new ArrayList<>();
 
-                if (orginalniNaziv.isEmpty())
-                    greske.add("orginalni naziv");
-                if (prevedeniNaziv.isEmpty())
-                    greske.add("prevedeni naziv");
-                if (slika.isEmpty())
-                    greske.add("slika");
-                if (studio.isEmpty())
-                    greske.add("studio");
-                if (sequels.isEmpty())
-                    greske.add("nastavci");
-                if (opis.isEmpty())
-                    greske.add("opis");
-                if (genres.isEmpty())
-                    greske.add("žanrovi");
-                if (pocetak == null)
-                    greske.add("pocetak");
+            if (orginalniNaziv.isEmpty())
+                greske.add("orginalni naziv");
+            if (prevedeniNaziv.isEmpty())
+                greske.add("prevedeni naziv");
+            if (slika.isEmpty())
+                greske.add("slika");
+            if (studio.isEmpty())
+                greske.add("studio");
+            if (sequels.isEmpty())
+                greske.add("nastavci");
+            if (opis.isEmpty())
+                greske.add("opis");
+            if (genres.isEmpty())
+                greske.add("žanrovi");
+            if (pocetak == null)
+                greske.add("pocetak");
 
 
-                if (tip.equals("Serija")) {
-                    if (kraj == null)
-                        greske.add("kraj");
-                    if (brojEpizoda.isEmpty() || !brojEpizoda.matches("[0-9]+"))
-                        greske.add("broj epizoda");
+            if (tip.equals("Serija")) {
+                if (kraj == null)
+                    greske.add("kraj");
+                if (brojEpizoda.isEmpty() || !brojEpizoda.matches("[0-9]+"))
+                    greske.add("broj epizoda");
 
-                    if (greske.isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Spremanje");
-                        alert.setHeaderText("Želite li spremiti show?");
-                        ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
-                        ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
-                        alert.getButtonTypes().setAll(daButton, neButton);
-                        alert.showAndWait().ifPresent(response -> {
-                            try {
-                                if (response == daButton) {
-                                    String finalSlika = updateSlika(slika);
+                if (greske.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        try {
+                            if (response == daButton) {
+                                String finalSlika = updateSlika(slika);
 
-                                    if (showComboBox.getValue().getId().equals(-1L)) {
-                                        DataBase.addShow(new Series(
-                                                -1L,
-                                                orginalniNaziv,
-                                                prevedeniNaziv,
-                                                opis,
-                                                finalSlika,
-                                                studio,
-                                                genres,
-                                                sequels,
-                                                new StartEndDate(
-                                                        pocetak,
-                                                        kraj),
-                                                Integer.parseInt(brojEpizoda)
-                                        ));
-                                        new Thread(new AddPromjenaThread(new Promjena(
-                                                null,
-                                                "Dodaj seriju",
-                                                "NE POSTOJI",
-                                                orginalniNaziv,
-                                                Main.currentUser.getRole(),
-                                                LocalDateTime.now()
-                                        ))).start();
-                                    } else {
-                                        Show show = showComboBox.getValue();
-                                        DataBase.updateShow(new Series(
-                                                show.getId(),
-                                                orginalniNaziv,
-                                                prevedeniNaziv,
-                                                opis,
-                                                finalSlika,
-                                                studio,
-                                                genres,
-                                                sequels,
-                                                new StartEndDate(
-                                                        pocetak,
-                                                        kraj),
-                                                Integer.parseInt(brojEpizoda)
-                                        ));
+                                if (showComboBox.getValue().getId().equals(-1L)) {
+                                    DataBase.addShow(new Series(
+                                            -1L,
+                                            orginalniNaziv,
+                                            prevedeniNaziv,
+                                            opis,
+                                            finalSlika,
+                                            studio,
+                                            genres,
+                                            sequels,
+                                            new StartEndDate(
+                                                    pocetak,
+                                                    kraj),
+                                            Integer.parseInt(brojEpizoda)
+                                    ));
+                                    new Thread(new AddPromjenaThread(new Promjena(
+                                            null,
+                                            "Dodaj seriju",
+                                            "NE POSTOJI",
+                                            orginalniNaziv,
+                                            Main.currentUser.getRole(),
+                                            LocalDateTime.now()
+                                    ))).start();
+                                } else {
+                                    Show show = showComboBox.getValue();
+                                    DataBase.updateShow(new Series(
+                                            show.getId(),
+                                            orginalniNaziv,
+                                            prevedeniNaziv,
+                                            opis,
+                                            finalSlika,
+                                            studio,
+                                            genres,
+                                            sequels,
+                                            new StartEndDate(
+                                                    pocetak,
+                                                    kraj),
+                                            Integer.parseInt(brojEpizoda)
+                                    ));
 
-                                        updateShowPromjene(show);
-                                    }
-                                    refresh();
+                                    updateShowPromjene(show);
                                 }
-                            } catch (BazaPodatakaException | PromjeneException e) {
-                                logger.error(e.getMessage(), e);
-                                e.printStackTrace();
+                                refresh();
                             }
-                        });
-                    } else
-                        Main.pogresanUnosPodataka(greske);
-                } else {
-                    if (greske.isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Spremanje");
-                        alert.setHeaderText("Želite li spremiti show?");
-                        ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
-                        ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
-                        alert.getButtonTypes().setAll(daButton, neButton);
-                        alert.showAndWait().ifPresent(response -> {
-                            try {
-                                if (response == daButton) {
-                                    String finalSlika = updateSlika(slika);
+                        } catch (BazaPodatakaException | PromjeneException e) {
+                            logger.error(e.getMessage(), e);
+                            e.printStackTrace();
+                        }
+                    });
+                } else
+                    Main.pogresanUnosPodataka(greske);
+            } else {
+                if (greske.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Spremanje");
+                    alert.setHeaderText("Želite li spremiti show?");
+                    ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
+                    ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
+                    alert.getButtonTypes().setAll(daButton, neButton);
+                    alert.showAndWait().ifPresent(response -> {
+                        try {
+                            if (response == daButton) {
+                                String finalSlika = updateSlika(slika);
 
-                                    if (showComboBox.getValue().getId().equals(-1L)) {
-                                        DataBase.addShow(new Movie(
-                                                -1L,
-                                                orginalniNaziv,
-                                                prevedeniNaziv,
-                                                opis,
-                                                finalSlika,
-                                                studio,
-                                                genres,
-                                                sequels,
-                                                pocetak
-                                        ));
-                                        new Thread(new AddPromjenaThread(new Promjena(
-                                                null,
-                                                "Dodaj film",
-                                                "NE POSTOJI",
-                                                orginalniNaziv,
-                                                Main.currentUser.getRole(),
-                                                LocalDateTime.now()
-                                        ))).start();
-                                    } else {
-                                        Show show = showComboBox.getValue();
-                                        DataBase.updateShow(new Movie(
-                                                show.getId(),
-                                                orginalniNaziv,
-                                                prevedeniNaziv,
-                                                opis,
-                                                finalSlika,
-                                                studio,
-                                                genres,
-                                                sequels,
-                                                pocetak
-                                        ));
+                                if (showComboBox.getValue().getId().equals(-1L)) {
+                                    DataBase.addShow(new Movie(
+                                            -1L,
+                                            orginalniNaziv,
+                                            prevedeniNaziv,
+                                            opis,
+                                            finalSlika,
+                                            studio,
+                                            genres,
+                                            sequels,
+                                            pocetak
+                                    ));
+                                    new Thread(new AddPromjenaThread(new Promjena(
+                                            null,
+                                            "Dodaj film",
+                                            "NE POSTOJI",
+                                            orginalniNaziv,
+                                            Main.currentUser.getRole(),
+                                            LocalDateTime.now()
+                                    ))).start();
+                                } else {
+                                    Show show = showComboBox.getValue();
+                                    DataBase.updateShow(new Movie(
+                                            show.getId(),
+                                            orginalniNaziv,
+                                            prevedeniNaziv,
+                                            opis,
+                                            finalSlika,
+                                            studio,
+                                            genres,
+                                            sequels,
+                                            pocetak
+                                    ));
 
-                                        updateShowPromjene(show);
-                                    }
-                                    refresh();
+                                    updateShowPromjene(show);
                                 }
-                            } catch (BazaPodatakaException | PromjeneException e) {
-                                logger.error(e.getMessage(), e);
-                                e.printStackTrace();
+                                refresh();
                             }
-                        });
-                    } else
-                        Main.pogresanUnosPodataka(greske);
-                }
+                        } catch (BazaPodatakaException | PromjeneException e) {
+                            logger.error(e.getMessage(), e);
+                            e.printStackTrace();
+                        }
+                    });
+                } else
+                    Main.pogresanUnosPodataka(greske);
             }
         } catch (KriviInputException e){
             logger.warn(e.getMessage(), e);

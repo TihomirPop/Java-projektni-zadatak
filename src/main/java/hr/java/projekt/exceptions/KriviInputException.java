@@ -1,7 +1,7 @@
 package hr.java.projekt.exceptions;
 
 
-public class KriviInputException extends Exception{
+public class KriviInputException extends RuntimeException{
     public KriviInputException() {}
 
     public KriviInputException(String message) {

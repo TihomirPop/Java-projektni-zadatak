@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class Datoteke {
     public static final String USERS_PATH = "dat/users.txt";
-    public static final int SIZE_OF_USERS = 6;
+    public static final int SIZE_OF_USERS = 7;
 
     public static List<User> getUsers() throws DatotekaException{
         try(BufferedReader reader = new BufferedReader(new FileReader(USERS_PATH))) {
@@ -28,9 +28,10 @@ public class Datoteke {
                         Long.parseLong(usersLines.get(i)),
                         usersLines.get(i + 1),
                         usersLines.get(i + 2),
-                        Long.parseLong(usersLines.get(i + 3)),
-                        Integer.parseInt(usersLines.get(i + 4)),
-                        Boolean.parseBoolean(usersLines.get(i + 5))
+                        usersLines.get(i + 3),
+                        usersLines.get(i + 4),
+                        Integer.parseInt(usersLines.get(i + 5)),
+                        Boolean.parseBoolean(usersLines.get(i + 6))
                 ));
             }
             return users;
@@ -46,7 +47,8 @@ public class Datoteke {
             out.write('\n' + id.toString());
             out.write('\n' + user.getEmail());
             out.write('\n' + user.getUsername());
-            out.write('\n' + user.getPassword().toString());
+            out.write('\n' + user.getPassword());
+            out.write('\n' + user.getSalt());
             out.write('\n' + user.getRole().toString());
             out.write('\n' + user.getVerified().toString());
             Main.prikaziScene(new FXMLLoader(Main.class.getResource("login.fxml")));
@@ -65,11 +67,13 @@ public class Datoteke {
                     if(user.getUsername() != null)
                         userLines.set(i + 2, user.getUsername());
                     if(user.getPassword() != null)
-                        userLines.set(i + 3, user.getPassword().toString());
+                        userLines.set(i + 3, user.getPassword());
+                    if(user.getSalt() != null)
+                        userLines.set(i + 4, user.getSalt());
                     if(user.getRole() != null)
-                        userLines.set(i + 4, user.getRole().toString());
+                        userLines.set(i + 5, user.getRole().toString());
                     if(user.getVerified() != null)
-                        userLines.set(i + 5, user.getVerified().toString());
+                        userLines.set(i + 6, user.getVerified().toString());
                     break;
                 }
             String userText = userLines.get(0);
@@ -84,7 +88,7 @@ public class Datoteke {
     }
 
     public static void deleteUser(User user) throws DatotekaException{
-        List<String> usersLines = null;
+        List<String> usersLines;
         try {
             usersLines = Files.lines(Path.of(USERS_PATH)).collect(Collectors.toList());
         } catch (IOException e) {
@@ -101,7 +105,8 @@ public class Datoteke {
                     out.write(usersLines.get(i + 2) + '\n');
                     out.write(usersLines.get(i + 3) + '\n');
                     out.write(usersLines.get(i + 4) + '\n');
-                    out.write(usersLines.get(i + 5));
+                    out.write(usersLines.get(i + 5) + '\n');
+                    out.write(usersLines.get(i + 6));
                     continue;
                 }
                 out.write('\n' + usersLines.get(i));
@@ -110,6 +115,7 @@ public class Datoteke {
                 out.write('\n' + usersLines.get(i + 3));
                 out.write('\n' + usersLines.get(i + 4));
                 out.write('\n' + usersLines.get(i + 5));
+                out.write('\n' + usersLines.get(i + 6));
             }
 
         }catch (IOException e){

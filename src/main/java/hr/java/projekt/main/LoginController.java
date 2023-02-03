@@ -39,8 +39,14 @@ public class LoginController {
 
             if (greske.isEmpty()) {
                 try {
-                    Main.currentUser = users.stream().filter(u -> u.getUsername().equals(username)).filter(u -> u.getPassword().equals(Hash.hash(password))).toList().get(0);
-                    goToMainList();
+                    User user = users.stream().filter(u -> u.getUsername().equals(username)).toList().get(0);
+                    if(user.getPassword().equals(Hash.hash(password, user.getSalt()))){
+                        Main.currentUser = user;
+                        goToMainList();
+                    }
+                    else
+                        throw new ArrayIndexOutOfBoundsException("Kriva lozinka");
+
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Pogrešan unos podataka");
