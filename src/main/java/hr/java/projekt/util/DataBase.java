@@ -439,4 +439,14 @@ public class DataBase {
             throw new BazaPodatakaException(e);
         }
     }
+
+    public static Integer getNumberOfUsersShows(User user) throws BazaPodatakaException{
+        try(Connection connection = spajanjeNaBazu()) {
+            ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM USER_SHOWS WHERE USER_ID = " + user.getId().toString());
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException | IOException e) {
+            throw new BazaPodatakaException(e);
+        }
+    }
 }

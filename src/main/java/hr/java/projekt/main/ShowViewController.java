@@ -81,12 +81,12 @@ public class ShowViewController {
             prosjek.setText(String.format("%.2f", show.getProsjek()));
 
             List<Genre> genres = show.getGenres().stream().toList();
-            String string = zanrovi.getText() + " " + genres.get(0).toString().substring(0, 1) + genres.get(0).toString().substring(1).toLowerCase();
+            String string = zanrovi.getText() + " " + genres.get(0).toString().charAt(0) + genres.get(0).toString().substring(1).toLowerCase();
             for (int i = 1; i < genres.size(); i++)
-                string += ", " + genres.get(i).toString().substring(0, 1) + genres.get(i).toString().substring(1).toLowerCase();
+                string += ", " + genres.get(i).toString().charAt(0) + genres.get(i).toString().substring(1).toLowerCase();
             zanrovi.setText(string.replaceAll("_", " "));
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY.");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
             if (show instanceof Series series) {
                 tip.setText(tip.getText() + " Serija");
                 epizode.setText(epizode.getText() + " " + series.getNumberOfEpisodes().toString());
@@ -139,7 +139,8 @@ public class ShowViewController {
                     }
                 }
         } catch (BazaPodatakaException e){
-
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 
@@ -167,7 +168,7 @@ public class ShowViewController {
                         alert.getButtonTypes().setAll(daButton, neButton);
                         alert.showAndWait().ifPresent(response -> {
                             if (response == daButton)
-                                addUserShow(userOcjena, epizodeInt);
+                                saveUserShow(userOcjena, epizodeInt);
                         });
                     } else {
                         try {
@@ -187,7 +188,7 @@ public class ShowViewController {
                         alert.getButtonTypes().setAll(daButton, neButton);
                         alert.showAndWait().ifPresent(response -> {
                             if (response == daButton)
-                                addUserShow(userOcjena, epizodeInt);
+                                saveUserShow(userOcjena, epizodeInt);
                         });
                     } else {
                         greske.add("epizode");
@@ -202,17 +203,24 @@ public class ShowViewController {
         }
     }
 
-    private void addUserShow(Score userOcjena, Integer epizodeInt) {
+    private void saveUserShow(Score userOcjena, Integer epizodeInt) {
         try {
-            if (userShow == null) {
+            if (userShow != null) {
+                userShow.setScore(userOcjena);
+                userShow.setWatched(epizodeInt);
+                DataBase.updateUserShow(userShow);
+            }
+            else if(!Main.currentUser.getVerified() && (DataBase.getNumberOfUsersShows(Main.currentUser) == 10)){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Niste verificirani");
+                alert.setHeaderText("Korisnici koji nisu verificirani smiju imati samo 10 filmova i serija.");
+                alert.showAndWait();
+            }
+            else {
                 UserShowBuilder userShowBuilder = new UserShowBuilder(Main.currentUser);
                 userShow = userShowBuilder.saShow(show).saScore(userOcjena).saWatched(epizodeInt).build();
                 DataBase.addUserShow(userShow);
                 userShow = DataBase.getUserShow(Main.currentUser, show);
-            } else {
-                userShow.setScore(userOcjena);
-                userShow.setWatched(epizodeInt);
-                DataBase.updateUserShow(userShow);
             }
         } catch (BazaPodatakaException e){
             logger.error(e.getMessage(), e);
