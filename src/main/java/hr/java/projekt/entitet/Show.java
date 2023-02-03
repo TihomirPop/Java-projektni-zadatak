@@ -32,13 +32,13 @@ public abstract class Show extends Entitet implements Shows {
         this.orginalniNaslov = orginalniNaslov;
         this.prevedeniNaslov = prevedeniNaslov;
         this.opis = opis;
-        String ispravnaSlika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
-        if(slika != null && !slika.equals(ispravnaSlika)) {
+
+        if(slika != null && !slika.equals("dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4))) {
             try {
                 if(slika.startsWith("https://"))
                     this.slika = slika;
                 else {
-                    this.slika = ispravnaSlika;
+                    this.slika = "dat/img/" + orginalniNaslov.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
                     Files.deleteIfExists(Path.of(this.slika));
                     Files.copy(Path.of(slika), Path.of(this.slika));
                 }
@@ -122,19 +122,5 @@ public abstract class Show extends Entitet implements Shows {
             e.printStackTrace();
         }
         return null;
-    }
-    public static Show odrediNajboljiShow(List<Show> shows) {
-        Double maxProsjek = 0.;
-        Show maxShow = null;
-        ListPair<Show, Double> showProsjekPair = new ListPair<>(new ArrayList<>(), new ArrayList<>());
-        for(Show show: shows)
-            showProsjekPair.add(show, show.getProsjek());
-
-        for(int i = 0; i < showProsjekPair.getFirstList().size(); i++)
-            if(showProsjekPair.fromSecondGet(i) > maxProsjek){
-                maxProsjek = showProsjekPair.fromSecondGet(i);
-                maxShow = showProsjekPair.fromFirstGet(i);
-            }
-        return maxShow;
     }
 }

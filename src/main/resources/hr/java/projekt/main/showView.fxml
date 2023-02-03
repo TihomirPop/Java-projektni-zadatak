@@ -142,12 +142,12 @@
                         <Insets left="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="studio" text="Studio:">
+                  <Label fx:id="studio" text="Studio:" wrapText="true">
                      <VBox.margin>
                         <Insets left="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="zanrovi" text="Žanrovi:">
+                  <Label fx:id="zanrovi" text="Žanrovi:" wrapText="true">
                      <VBox.margin>
                         <Insets left="10.0" />
                      </VBox.margin>

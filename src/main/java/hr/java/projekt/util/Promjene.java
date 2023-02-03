@@ -2,8 +2,6 @@ package hr.java.projekt.util;
 
 import hr.java.projekt.entitet.Promjena;
 import hr.java.projekt.exceptions.PromjeneException;
-import hr.java.projekt.threads.AddPromjenaThread;
-
 import java.io.*;
 import java.util.List;
 

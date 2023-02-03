@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -44,7 +45,7 @@
                   <Insets right="5.0" />
                </padding>
             </Label>
-            <TextField fx:id="traziTextField" maxWidth="250.0" onKeyTyped="#showSearch" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="traziTextField" maxWidth="250.0" onAction="#showSearch" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
@@ -65,6 +66,11 @@
                   <Insets />
                </GridPane.margin>
             </Button>
+            <CheckBox fx:id="dodajSaInternetaCheckBox" mnemonicParsing="false" text="Dodaj show sa interneta" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </CheckBox>
          </children>
       </GridPane>
       <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">

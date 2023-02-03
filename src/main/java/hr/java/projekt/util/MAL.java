@@ -38,7 +38,7 @@ public class MAL {
         Long id = -1l;
         String orginalniNaslov = anime.getTitle();
         String prevedeniNaslov = anime.getAlternativeTitles().getEnglish();
-        String opis = anime.getSynopsis();
+        String opis = anime.getSynopsis().replaceAll("\\\\n", "\n");
         String slika = anime.getMainPicture().getLargeURL();
         String studio = anime.getStudios()[0].getName();
         List<String> animeGenres = Arrays.stream(anime.getGenres()).map(g -> g.getName().toUpperCase().replaceAll(" ", "_")).toList();

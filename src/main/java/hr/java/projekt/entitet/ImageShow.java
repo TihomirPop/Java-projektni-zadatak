@@ -13,7 +13,7 @@ public class ImageShow<T extends Show> {
 
     public ImageShow(T show) {
         this.show = show;
-        this.imageView = new ImageView(new Image(Path.of(show.getSlika()).toAbsolutePath().toString(), 0, 1024, true, true));
+        this.imageView = new ImageView(new Image(Path.of(show.getSlika()).toAbsolutePath().toString(), 0, 150, true, false));
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(64);
     }

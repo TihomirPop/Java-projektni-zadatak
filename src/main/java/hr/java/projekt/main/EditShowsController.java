@@ -7,6 +7,7 @@ import hr.java.projekt.entitet.*;
 import hr.java.projekt.exceptions.BazaPodatakaException;
 import hr.java.projekt.exceptions.KriviInputException;
 import hr.java.projekt.exceptions.PromjeneException;
+import hr.java.projekt.util.MAL;
 import hr.java.projekt.util.Promjene;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -15,7 +16,11 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,6 +68,8 @@ public class EditShowsController {
     private Label krajLabel;
     @FXML
     private Label brojEpizodaLabel;
+    @FXML
+    private CheckBox dodajSaInternetaCheckBox;
     private FileChooser fileChooser = new FileChooser();
     private List<Show> shows;
     private List<Show> showsWithNewShow;
@@ -82,6 +89,7 @@ public class EditShowsController {
     private void refresh(){
         try {
             shows = DataBase.getShows();
+            dodajSaInternetaCheckBox.setSelected(false);
             showsWithNewShow = new ArrayList<>();
             showsWithNewShow.add(new Series(-1l, "<novi show>", "<novi show>", null, null, null, null, new ArrayList<>(1), null, null));
             showsWithNewShow.get(0).getIdSeqience().add(-1l);
@@ -102,13 +110,17 @@ public class EditShowsController {
         Show show = showComboBox.getValue();
         if(show == null)
             return;
-        if(!show.getId().equals(-1l)){
+
+        else if(!show.getId().equals(-1l) || dodajSaInternetaCheckBox.isSelected()){
             orginalniNazivTextField.setText(show.getOrginalniNaslov());
             prevedeniNazivTextField.setText(show.getPrevedeniNaslov());
             lokacijaSlikeLabel.setText(show.getSlika());
             studioTextField.setText(show.getStudio());
             showNastavciComboBox.setItems(FXCollections.observableArrayList(shows.stream().filter(s -> !show.getIdSeqience().contains(s.getId())).toList()));
-            nastavciListView.setItems(FXCollections.observableArrayList(show.getIdSeqience().stream().map(id -> shows.stream().filter(s -> s.getId().equals(id)).toList().get(0)).collect(Collectors.toList())));
+            if(dodajSaInternetaCheckBox.isSelected())
+                nastavciListView.setItems(FXCollections.observableArrayList(show));
+            else
+                nastavciListView.setItems(FXCollections.observableArrayList(show.getIdSeqience().stream().map(id -> shows.stream().filter(s -> s.getId().equals(id)).toList().get(0)).collect(Collectors.toList())));
             opisTextArea.setText(show.getOpis());
             zanroviListView.getSelectionModel().clearSelection();
             for(Genre genre: show.getGenres())
@@ -166,10 +178,18 @@ public class EditShowsController {
     private void showSearch(){
         String search = traziTextField.getText();
 
-        if(search.equals(""))
-            showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow));
-        else
-            showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getOrginalniNaslov().toLowerCase().contains(search.toLowerCase()) || show.getPrevedeniNaslov().toLowerCase().contains(search.toLowerCase())).toList()));
+        if(dodajSaInternetaCheckBox.isSelected()) {
+            if (search.equals(""))
+                showComboBox.setItems(FXCollections.observableList(new ArrayList<>()));
+            else
+                showComboBox.setItems(FXCollections.observableList(MAL.getAnime(search)));
+        }
+        else {
+            if (search.equals(""))
+                showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow));
+            else
+                showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getOrginalniNaslov().toLowerCase().contains(search.toLowerCase()) || show.getPrevedeniNaslov().toLowerCase().contains(search.toLowerCase())).toList()));
+        }
     }
     @FXML
     private void sequelSearch(){
@@ -296,6 +316,14 @@ public class EditShowsController {
                 if (pocetak == null)
                     greske.add("pocetak");
 
+
+                if(slika.startsWith("https://")){
+                    URL url = new URL(slika);
+                    BufferedImage image = ImageIO.read(url);
+                    slika = "dat/img/" + orginalniNaziv.replaceAll("[^a-zA-Z0-9_;-]", " ") + slika.substring(slika.length() - 4);
+                    ImageIO.write(image, "jpg", new File(slika));
+                }
+
                 if (tip.equals("Serija")) {
                     if (kraj == null)
                         greske.add("kraj");
@@ -309,6 +337,7 @@ public class EditShowsController {
                         ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
                         ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
                         alert.getButtonTypes().setAll(daButton, neButton);
+                        String finalSlika = slika;
                         alert.showAndWait().ifPresent(response -> {
                             try {
                                 if (response == daButton) {
@@ -318,7 +347,7 @@ public class EditShowsController {
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                slika,
+                                                finalSlika,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -342,7 +371,7 @@ public class EditShowsController {
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                slika,
+                                                finalSlika,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -371,6 +400,7 @@ public class EditShowsController {
                         ButtonType daButton = new ButtonType("Da", ButtonBar.ButtonData.YES);
                         ButtonType neButton = new ButtonType("Ne", ButtonBar.ButtonData.NO);
                         alert.getButtonTypes().setAll(daButton, neButton);
+                        String finalSlika1 = slika;
                         alert.showAndWait().ifPresent(response -> {
                             try {
                                 if (response == daButton) {
@@ -380,7 +410,7 @@ public class EditShowsController {
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                slika,
+                                                finalSlika1,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -401,7 +431,7 @@ public class EditShowsController {
                                                 orginalniNaziv,
                                                 prevedeniNaziv,
                                                 opis,
-                                                slika,
+                                                finalSlika1,
                                                 studio,
                                                 genres,
                                                 sequels,
@@ -424,6 +454,10 @@ public class EditShowsController {
         } catch (KriviInputException e){
             logger.error(e.getMessage(), e);
             e.printStackTrace();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

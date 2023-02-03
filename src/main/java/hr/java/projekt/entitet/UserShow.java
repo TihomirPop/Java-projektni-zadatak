@@ -2,7 +2,7 @@ package hr.java.projekt.entitet;
 
 import java.io.Serializable;
 
-public class UserShow extends Entitet implements Serializable {
+public class UserShow extends Entitet {
     private User user;
     private Show show;
     private Score score;

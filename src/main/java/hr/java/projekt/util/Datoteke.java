@@ -23,8 +23,6 @@ public class Datoteke {
 
     public static List<User> getUsers() throws DatotekaException{
         try(BufferedReader reader = new BufferedReader(new FileReader(USERS_PATH))) {
-            System.out.println("Loading users…");
-            logger.info("Loading users...");
             List<String> usersLines = reader.lines().collect(Collectors.toList());
             List<User> users = new ArrayList<>();
             for(int i = 0; i < usersLines.size(); i += SIZE_OF_USERS){

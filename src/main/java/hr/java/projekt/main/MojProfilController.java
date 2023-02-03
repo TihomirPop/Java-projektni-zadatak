@@ -122,7 +122,7 @@ public class MojProfilController {
                         LocalDateTime.now()
                 ));
 
-            if(!username.equals(Main.currentUser.getUsername())) {
+            if(!email.equals(Main.currentUser.getEmail())) {
                 promjene.add(new Promjena(
                         null,
                         "Email od " + Main.currentUser.getUsername(),
