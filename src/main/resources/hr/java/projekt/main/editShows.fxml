@@ -45,7 +45,7 @@
                   <Insets right="5.0" />
                </padding>
             </Label>
-            <TextField fx:id="traziTextField" maxWidth="250.0" onAction="#showSearch" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="traziTextField" maxWidth="250.0" onAction="#showSearch" onKeyTyped="#keyTypedShowSearch" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
@@ -66,7 +66,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <CheckBox fx:id="dodajSaInternetaCheckBox" mnemonicParsing="false" text="Dodaj show sa interneta" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+            <CheckBox fx:id="dodajSaInternetaCheckBox" mnemonicParsing="false" onAction="#dodajSaInternetaClick" text="Dodaj show sa interneta" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                <padding>
                   <Insets left="5.0" />
                </padding>

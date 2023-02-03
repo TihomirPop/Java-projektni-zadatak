@@ -24,7 +24,7 @@ public class MAL {
 
             List<Anime> anime =mal.getAnime()
                     .withQuery(search)
-                    .withLimit(10)
+                    .withLimit(8)
                     .includeNSFW(false)
                     .search();
 

@@ -181,7 +181,7 @@ public class EditShowsController {
         String search = traziTextField.getText();
 
         if(dodajSaInternetaCheckBox.isSelected()) {
-            if (search.equals(""))
+            if (search.length() < 3)
                 showComboBox.setItems(FXCollections.observableList(new ArrayList<>()));
             else
                 showComboBox.setItems(FXCollections.observableList(MAL.getAnime(search)));
@@ -193,6 +193,19 @@ public class EditShowsController {
                 showComboBox.setItems(FXCollections.observableArrayList(showsWithNewShow.stream().filter(show -> show.getOrginalniNaslov().toLowerCase().contains(search.toLowerCase()) || show.getPrevedeniNaslov().toLowerCase().contains(search.toLowerCase())).toList()));
         }
     }
+    @FXML
+    private void dodajSaInternetaClick(){
+        if(dodajSaInternetaCheckBox.isSelected())
+            showSearch();
+        else
+            refresh();
+    }
+    @FXML
+    private void keyTypedShowSearch(){
+        if(!dodajSaInternetaCheckBox.isSelected())
+            showSearch();
+    }
+
     @FXML
     private void sequelSearch(){
         String search = traziNastavkeTextField.getText();
